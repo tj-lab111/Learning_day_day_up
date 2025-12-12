@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>强化学习的数学原理 - 深度全解 (精注版)</title>
+    <title>强化学习的数学原理 - 深度全解 (完整版)</title>
 
     <!-- Mermaid JS (Cloudflare CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
@@ -96,6 +96,7 @@
             font-size: 1.2rem;
             color: var(--primary-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
         }
 
         #sidebar-toggle:hover {
@@ -219,12 +220,15 @@
             margin-bottom: 0.5rem;
         }
 
+        /* Plain English Box (The one requested to be restored) */
         .box-easy {
             background-color: #f1f8e9;
             border-left: 5px solid #8bc34a;
             margin-top: -1rem;
+            /* Connect to previous box */
             margin-bottom: 2rem;
             border-radius: 0 0 4px 4px;
+            padding-top: 2rem;
         }
 
         .box-easy strong {
@@ -247,28 +251,35 @@
             font-weight: bold;
         }
 
-        /* Formula Breakdown */
+        /* Formula Breakdown Box (The new requested feature) */
         .formula-breakdown {
             margin-top: 10px;
             padding: 10px;
             background: #fff;
-            border: 1px dashed #ccc;
+            border: 1px dashed #999;
             border-radius: 4px;
             font-size: 0.9rem;
+            font-family: var(--heading-font);
         }
 
-        .formula-breakdown strong {
+        .formula-breakdown-title {
+            display: block;
+            font-weight: bold;
             color: #555;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 2px;
         }
 
         .formula-breakdown ul {
             margin: 0;
-            padding-left: 1.5rem;
-            list-style-type: disc;
+            padding-left: 1.2rem;
+            list-style-type: circle;
         }
 
         .formula-breakdown li {
             margin-bottom: 4px;
+            color: #444;
         }
 
         .mermaid {
@@ -379,7 +390,12 @@
 
         <section id="intro">
             <h2>前言：学习指南</h2>
-            <p>本笔记致力于将“高大上”的数学公式拆解为“通俗易懂”的语言。</p>
+            <p>本笔记致力于将“高大上”的数学公式拆解为“通俗易懂”的语言。我们采用<b>三层结构</b>：</p>
+            <ol>
+                <li><b>学术定义</b>：严谨的数学描述，用于应对考试和科研。</li>
+                <li><b>公式详解</b>：逐项解释公式中每个符号的含义。</li>
+                <li><b>通俗解读</b>：用大白话和生活例子解释“它到底在说什么”。</li>
+            </ol>
         </section>
 
         <!-- CHAPTER 1 -->
@@ -399,24 +415,45 @@
                     <li>$\gamma$: 折扣因子</li>
                 </ul>
             </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>就把 MDP 想象成玩游戏：</p>
+                <ul>
+                    <li><b>S (状态)</b>：游戏屏幕上显示的画面。</li>
+                    <li><b>A (动作)</b>：手柄上的上下左右键。</li>
+                    <li><b>P (转移)</b>：你按了“跳”，马里奥不一定每次都能跳一样高（可能因为地形滑），这叫不确定性。</li>
+                    <li><b>R (奖励)</b>：吃到金币+100分，碰到乌龟-1条命。</li>
+                    <li><b>$\gamma$ (折扣)</b>：现在的100块钱比明天的100块钱值钱。这告诉我们要“活在当下”，不要为了太远的虚幻目标饿死。</li>
+                </ul>
+            </div>
+
+            <div class="mermaid">
+                graph LR
+                A["Agent (你)"] -- "Action (按键)" --> E["Environment (游戏机)"]
+                E -- "State (新画面)" --> A
+                E -- "Reward (得分)" --> A
+                style A fill:#e1f5fe,stroke:#01579b
+                style E fill:#fff3e0,stroke:#e65100
+            </div>
 
             <h3>1.2 回报 (Return)</h3>
             <div class="box-def">
                 <strong>定义 1.2 (折扣回报)</strong>
                 $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$G_t$: 时刻 $t$ 的总回报 (Return)。</li>
+                        <li>$G_t$: 时刻 $t$ 的总回报 (Return)。我们的最终目标就是让它变大。</li>
                         <li>$R_{t+1}$: 下一步马上能拿到的即时奖励 (Immediate Reward)。</li>
-                        <li>$\gamma$ (Gamma): 折扣因子，通常取 $0.9$ 或 $0.99$。表示未来的奖励要打折。</li>
+                        <li>$\gamma$ (Gamma): 折扣因子，通常取 $0.9 \sim 0.99$。</li>
                         <li>$\sum$: 求和符号，表示把未来每一步的奖励加起来。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>回报就是“这辈子总共能赚多少钱”，越早赚到的钱越值钱（因为有 $\gamma$）。</p>
+                <p><b>R (Reward)</b> 是短视的，只看这一步爽不爽。</p>
+                <p><b>G (Return)</b> 是长远的，看的是“这辈子”能赚多少钱。强化学习的目标永远是让 $G$ 最大，而不是 $R$。</p>
             </div>
         </section>
 
@@ -427,17 +464,22 @@
 
             <h3>2.1 状态价值函数</h3>
             <div class="box-def">
-                <strong>定义 2.1 (状态价值)</strong>
+                <strong>定义 2.1 (状态价值 $v_\pi$)</strong>
                 $$ v_\pi(s) = \mathbb{E}_\pi [G_t | S_t=s] $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
                         <li>$v_\pi(s)$: 在状态 $s$ 下，按照策略 $\pi$ 玩，能得到的平均分数。</li>
-                        <li>$\mathbb{E}_\pi$: 数学期望 (Expectation)，即“平均值”。</li>
-                        <li>$G_t$: 总回报。</li>
+                        <li>$\mathbb{E}_\pi$: 数学期望 (Expectation)，即“平均值”。因为未来是不确定的，所以只能算平均。</li>
                         <li>$|$: 条件概率符号，读作“given”，表示“假设当前已经在状态 $s$”。</li>
                     </ul>
                 </div>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>状态价值</b>就是给当前状态“打分”。</p>
+                <p>比如下围棋，你处于一个“双三角”的局势（状态 $s$）。如果你的水平很高（策略 $\pi$ 好），你会觉得这局势赢面大（价值 $v$
+                    高）。如果水平臭，这局势可能就输了。所以价值取决于状态，也取决于你在这个状态下怎么玩（策略）。</p>
             </div>
 
             <h3>2.2 贝尔曼期望方程</h3>
@@ -445,14 +487,19 @@
                 <strong>定理 2.1 (递推公式)</strong>
                 $$ v_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} p(s', r | s, a) [r + \gamma v_\pi(s')] $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$\sum_a \pi(a|s)$: 遍历所有可能的动作 $a$，并乘上选这个动作的概率。</li>
-                        <li>$\sum_{s', r} p(...)$: 遍历动作 $a$ 导致的所有可能结果（新状态 $s'$ 和奖励 $r$）。</li>
+                        <li>$\sum_a \pi(a|s)$: 第一层求和。遍历所有可能的动作 $a$，并乘上选这个动作的概率。</li>
+                        <li>$\sum_{s', r} p(...)$: 第二层求和。遍历动作 $a$ 导致的所有可能结果。</li>
                         <li>$r$: 这一步拿到的奖励。</li>
                         <li>$\gamma v_\pi(s')$: 下一步所在状态的价值 $\times$ 折扣。</li>
                     </ul>
                 </div>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>这个公式说的是：<b>今天的身价 = 今天的现金 + 明天的预估身价 $\times$ 折扣。</b></p>
+                <p>它把一个长远的复杂计算，拆解成了“这一步”和“剩下所有步”。这是动态规划的核心。</p>
             </div>
         </section>
 
@@ -465,12 +512,17 @@
                 <strong>定理 3.1 (BOE)</strong>
                 $$ v_*(s) = \max_{a} \sum_{s', r} p(s', r | s, a) [r + \gamma v_*(s')] $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
                         <li>$v_*(s)$: 理论上的最高价值 (Optimal Value)。</li>
-                        <li>$\max_a$: 最大的不同点。这里不再求平均 ($\sum \pi$)，而是直接挑最好的那个动作。</li>
+                        <li>$\max_a$: 最大值算子。这里不再求平均 ($\sum \pi$)，而是假设我们非常聪明，直接挑最好的那个动作。</li>
                     </ul>
                 </div>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>之前的公式是“给定策略算价值”。现在的公式是“我要寻找神之手（最优策略）”。</p>
+                <p>这里的 $\max_a$ 意思是：在当前状态下，我不再随机出牌，而是<b>只选那个能让未来价值最大的动作</b>。只要我每一步都选最好的，我就能达到理论上的最高分。</p>
             </div>
         </section>
 
@@ -480,6 +532,21 @@
             <h2>第4章：动态规划 (DP)</h2>
             <h3>策略迭代与值迭代</h3>
             <p>核心利用了上述方程进行迭代计算。</p>
+
+            <div class="mermaid">
+                graph LR
+                PE["评估 (Evaluation)<br>算出当前策略多好"] -- "v" --> PI["改进 (Improvement)<br>把策略变更好"]
+                PI -- "New pi" --> PE
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>这就好比练武功：</p>
+                <ol>
+                    <li><b>评估</b>：先按现在的套路打一套，看看得分多少。</li>
+                    <li><b>改进</b>：发现这招“黑虎掏心”得分高，那以后这招多用点。</li>
+                    <li><b>循环</b>：一直练，直到再怎么改也提高不了得分了，你就成宗师了。</li>
+                </ol>
+            </div>
         </section>
 
         <!-- CHAPTER 5 -->
@@ -490,13 +557,19 @@
             <div class="box-def">
                 $$ v_\pi(s) \approx \frac{1}{N} \sum_{i=1}^N G_i $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
                         <li>$N$: 玩游戏的总次数。</li>
                         <li>$G_i$: 第 $i$ 次玩游戏得到的总分。</li>
                         <li>$\frac{1}{N} \sum$: 算术平均值。</li>
                     </ul>
                 </div>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>如果你不知道这枚硬币正面朝上的概率是多少（不知道 $P$），怎么办？</p>
+                <p><b>扔1000次，数数有多少次正面。</b></p>
+                <p>蒙特卡洛就是这个意思：我不懂物理公式，那我就亲自去试玩1000局游戏，把所有得分记下来取平均，那个平均分就是价值。</p>
             </div>
         </section>
 
@@ -510,26 +583,38 @@
                 $$ V(S_t) \leftarrow V(S_t) + \alpha [ \underbrace{R_{t+1} + \gamma V(S_{t+1})}_{\text{TD Target}} -
                 V(S_t) ] $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$\leftarrow$: 赋值更新符号。</li>
+                        <li>$\leftarrow$: 赋值更新。每次走一步，就更新一次 $V$。</li>
                         <li>$\alpha$ (Alpha): 学习率 (Learning Rate)。决定了我们多大程度上相信“新消息”。</li>
                         <li>$R_{t+1} + \gamma V(S_{t+1})$: <b>TD Target</b>。基于真实奖励 $R$ 和下一步估计 $V$ 组成的“新估计”。</li>
                         <li>$[\dots] - V(S_t)$: <b>TD Error</b> (误差)。新估计减去旧估计，表示我们之前的预测“偏”了多少。</li>
                     </ul>
                 </div>
             </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>假设你预测回家要走30分钟 ($V(S_t) = 30$)。</p>
+                <p>你走了5分钟到了地铁站 ($R=5$)，发现还要坐20分钟地铁 ($V(S_{t+1})=20$)。</p>
+                <p>这时候你的<b>新预测</b>是 $5+20=25$ 分钟。</p>
+                <p>你的<b>旧预测</b>是 30 分钟。</p>
+                <p><b>TD 就是：用“新预测”去修正“旧预测”。</b> 你不用等到真回到家了才发现自己预测错了，半路就能改。</p>
+            </div>
 
             <h3>7.2 Q-Learning</h3>
             <div class="box-def">
                 $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma \max_{a} Q(S', a) - Q(S,A)] $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
                         <li>$Q(S,A)$: 动作价值函数。表示在状态 $S$ 做动作 $A$ 有多好。</li>
                         <li>$\max_a Q(S', a)$: 想象下一步到了 $S'$ 后，我们会选最好的动作 $a$。这是 Q-Learning “贪婪”和“大胆”的体现。</li>
                     </ul>
                 </div>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>Q-Learning 特别“自信”。不管我现在是不是在乱走（探索），我在学习的时候，总是假设我下一步会走得<b>完美</b> ($\max Q$)。这让它可以在犯错的同时，依然学到正确的知识。</p>
             </div>
         </section>
 
@@ -541,7 +626,7 @@
             <div class="box-def">
                 $$ J(w) = \mathbb{E}_{\pi} [ (v_\pi(S) - \hat{v}(S, w))^2 ] $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
                         <li>$J(w)$: 损失函数 (Loss Function)，我们要最小化它。</li>
                         <li>$w$: 神经网络的参数（权重）。</li>
@@ -550,6 +635,24 @@
                         <li>$(\dots)^2$: 均方误差 (MSE)。</li>
                     </ul>
                 </div>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>之前的“表格法”是一个萝卜一个坑，每个状态存一个分。</p>
+                <p>但是像王者荣耀这种游戏，屏幕上的像素组合比宇宙原子还多，表格存不下。所以我们用<b>神经网络</b>（函数）来记分数。就像不用背下所有乘法结果，学会“乘法口诀”就能算出所有题。</p>
+            </div>
+
+            <h3>8.2 DQN 的两大法宝</h3>
+            <div class="box-def">
+                <ul>
+                    <li><b>Experience Replay (经验回放)</b></li>
+                    <li><b>Target Network (目标网络)</b></li>
+                </ul>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>经验回放</b>：像是“做错题本”。不仅刚做完题要改，以前做过的错题也要拿出来反复复习，防止忘了旧的学了新的，而且能打乱顺序，防止思维定势。</p>
+                <p><b>目标网络</b>：就像射箭。如果靶子一直动（Target 一直变），很难射准。Target Network 就是把靶子固定一会儿，让你先练练，练好了再挪靶子。</p>
             </div>
         </section>
 
@@ -561,7 +664,7 @@
             <div class="box-thm">
                 $$ \theta \leftarrow \theta + \alpha G_t \nabla \ln \pi(A_t|S_t, \theta) $$
                 <div class="formula-breakdown">
-                    <strong>📝 公式详解：</strong>
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
                         <li>$\theta$: 策略网络的参数。</li>
                         <li>$G_t$: 这一局得了多少分（权重）。分越高，更新力度越大。</li>
@@ -571,15 +674,32 @@
                     </ul>
                 </div>
             </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>这句话翻译过来就是：</p>
+                <p>如果这一局游戏赢了 ($G_t$ 高)，那么刚才那一连串动作出现的概率 ($\pi$) 都要<b>增加</b>。</p>
+                <p>如果输了，那些动作的概率就要<b>减小</b>。</p>
+                <p>简单粗暴，但非常有效。</p>
+            </div>
         </section>
 
         <!-- CHAPTER 10 -->
         <section id="ch10">
             <div class="source-tag">来源：第10课 Actor-Critic</div>
             <h2>第10章：Actor-Critic</h2>
+
+            <div class="mermaid">
+                graph LR
+                Actor["Actor (演员)"] -- "动作" --> Env
+                Env -- "奖励" --> Critic["Critic (评委)"]
+                Critic -- "打分" --> Actor
+            </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>结合了 TD (Critic 打分) 和 PG (Actor 表演)。</p>
+                <p>Policy Gradient 像是一个盲人在练习投篮，全靠最后进没进球（MC 回报）来调整，反馈太慢太随机。</p>
+                <p>Actor-Critic 请了个教练 (Critic)。</p>
+                <p><b>Actor (演员)</b>：负责表演（做动作）。</p>
+                <p><b>Critic (评委)</b>：负责打分。动作刚做完，评委就说“这动作姿势不对，扣分”。演员马上就能改，不用等到比赛结束。</p>
             </div>
         </section>
 
