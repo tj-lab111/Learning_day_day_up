@@ -6,32 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>强化学习的数学原理 - 深度全解 (完整版)</title>
 
-    <!-- Mermaid JS (Cloudflare CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
-    <script>
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'base',
-            securityLevel: 'loose',
-            flowchart: { useMaxWidth: true, htmlLabels: true }
-        });
-    </script>
+    <script>mermaid.initialize({ startOnLoad: true, theme: 'base', securityLevel: 'loose', flowchart: { useMaxWidth: true, htmlLabels: true } });</script>
 
-    <!-- MathJax Configuration -->
     <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                processEscapes: true,
-                tags: 'ams'
-            },
-            options: {
-                renderActions: {
-                    addMenu: [0, '', '']
-                }
-            }
-        };
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true, tags: 'ams' }, options: { renderActions: { addMenu: [0, '', ''] } } };
     </script>
     <script id="MathJax-script" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
@@ -46,7 +25,6 @@
             --sidebar-width: 300px;
             --sidebar-bg: #fff;
             --heading-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --code-font: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
         body {
@@ -58,7 +36,6 @@
             transition: margin-left 0.3s ease;
         }
 
-        /* Sidebar Styling */
         nav {
             width: var(--sidebar-width);
             background-color: var(--sidebar-bg);
@@ -88,24 +65,24 @@
             top: 15px;
             left: 15px;
             z-index: 1001;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #ccc;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ddd;
             border-radius: 4px;
-            padding: 8px 12px;
+            padding: 6px 10px;
             cursor: pointer;
             font-size: 1.2rem;
-            color: var(--primary-color);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         #sidebar-toggle:hover {
-            background: #f0f0f0;
+            background: #f8f8f8;
+            color: var(--accent-color);
         }
 
         nav .nav-header {
             padding: 1.5rem;
-            padding-top: 4rem;
+            padding-top: 5rem;
             background: var(--primary-color);
             color: white;
             text-align: center;
@@ -113,8 +90,10 @@
 
         nav .nav-header h2 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-family: var(--heading-font);
+            color: #fff !important;
+            font-weight: 600;
         }
 
         nav ul {
@@ -140,15 +119,12 @@
             padding-left: 25px;
         }
 
-        /* Main Content */
         main {
             margin-left: var(--sidebar-width);
             padding: 3rem 5rem;
             max-width: 1000px;
-            width: auto;
             background-color: white;
             min-height: 100vh;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.02);
             transition: margin-left 0.3s ease, max-width 0.3s ease, padding 0.3s ease;
         }
 
@@ -178,18 +154,11 @@
             color: var(--secondary-color);
         }
 
-        h4 {
-            font-size: 1.1rem;
-            margin-top: 1.5rem;
-            font-weight: bold;
-        }
-
         p {
             margin-bottom: 1.2rem;
             text-align: justify;
         }
 
-        /* Boxes */
         .box {
             padding: 1.5rem;
             margin: 1.5rem 0;
@@ -220,12 +189,10 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Plain English Box (The one requested to be restored) */
         .box-easy {
             background-color: #f1f8e9;
             border-left: 5px solid #8bc34a;
             margin-top: -1rem;
-            /* Connect to previous box */
             margin-bottom: 2rem;
             border-radius: 0 0 4px 4px;
             padding-top: 2rem;
@@ -251,7 +218,56 @@
             font-weight: bold;
         }
 
-        /* Formula Breakdown Box (The new requested feature) */
+        .box-logic {
+            background-color: #fdf2f8;
+            border-left: 5px solid #db2777;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            padding-top: 2.5rem;
+            border-radius: 4px;
+            font-family: var(--heading-font);
+            position: relative;
+        }
+
+        .box-logic::before {
+            content: "🔗 章节关联 / Logic Chain";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: #db2777;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* NEW: Section Flow Box */
+        .box-flow {
+            background-color: #e8eaf6;
+            border-left: 5px solid #5c6bc0;
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            padding-top: 2rem;
+            border-radius: 4px;
+            font-family: var(--heading-font);
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .box-flow::before {
+            content: "➡️ 小节逻辑 / Section Flow";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: #5c6bc0;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
         .formula-breakdown {
             margin-top: 10px;
             padding: 10px;
@@ -296,7 +312,6 @@
             font-family: var(--heading-font);
             font-size: 0.8rem;
             margin-bottom: 10px;
-            vertical-align: middle;
         }
 
         .source-link {
@@ -310,6 +325,14 @@
         .source-link:hover {
             text-decoration: underline;
             color: var(--accent-color);
+        }
+
+        .img-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+            font-family: var(--heading-font);
         }
 
         footer {
@@ -341,15 +364,7 @@
     <div id="loading-check">⚠️ 正在加载组件...</div>
     <script>
         document.getElementById('loading-check').style.display = 'block';
-        window.onload = function () {
-            setTimeout(function () {
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    document.getElementById('loading-check').style.display = 'none';
-                } else {
-                    document.getElementById('loading-check').innerText = "❌ 公式加载失败。建议使用 Chrome 并确保网络通畅。";
-                }
-            }, 4000);
-        };
+        window.onload = function () { setTimeout(function () { if (window.MathJax && window.MathJax.typesetPromise) { document.getElementById('loading-check').style.display = 'none'; } else { document.getElementById('loading-check').innerText = "❌ 公式加载失败。"; } }, 4000); };
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
     </script>
 
@@ -360,11 +375,11 @@
             <h2>课程目录</h2>
         </div>
         <ul>
-            <li><a href="#intro">前言：课程方法论</a></li>
+            <li><a href="#intro">前言：逻辑导图</a></li>
             <li><a href="#ch1">第1章：基本概念 (MDP)</a></li>
             <li><a href="#ch2">第2章：贝尔曼方程</a></li>
             <li><a href="#ch3">第3章：贝尔曼最优方程</a></li>
-            <li><a href="#ch4">第4章：值迭代与策略迭代</a></li>
+            <li><a href="#ch4">第4章：动态规划 (DP)</a></li>
             <li><a href="#ch5">第5章：蒙特卡洛方法</a></li>
             <li><a href="#ch6">第6章：随机逼近与 SGD</a></li>
             <li><a href="#ch7">第7章：时序差分 (TD)</a></li>
@@ -389,13 +404,19 @@
         </header>
 
         <section id="intro">
-            <h2>前言：学习指南</h2>
-            <p>本笔记致力于将“高大上”的数学公式拆解为“通俗易懂”的语言。我们采用<b>三层结构</b>：</p>
-            <ol>
-                <li><b>学术定义</b>：严谨的数学描述，用于应对考试和科研。</li>
-                <li><b>公式详解</b>：逐项解释公式中每个符号的含义。</li>
-                <li><b>通俗解读</b>：用大白话和生活例子解释“它到底在说什么”。</li>
-            </ol>
+            <h2>前言：学习地图</h2>
+            <p>本笔记致力于将"高大上"的数学公式拆解为"通俗易懂"的语言。</p>
+            <div class="box-logic">
+                <p>强化学习的核心目标是<b>找最优策略</b>。整个课程的逻辑链条是：</p>
+                <ul>
+                    <li>描述问题 -> <b>MDP (第1章)</b></li>
+                    <li>评估策略 -> <b>贝尔曼方程 (第2章)</b></li>
+                    <li>找最优 -> <b>BOE (第3章)</b></li>
+                    <li>怎么算？知道环境用 <b>DP (第4章)</b>；不知道环境用 <b>MC (第5章)</b> / <b>TD (第7章)</b></li>
+                    <li>状态太多？用函数拟合 -> <b>DQN (第8章)</b></li>
+                    <li>动作连续？直接优化策略 -> <b>PG (第9章)</b> / <b>Actor-Critic (第10章)</b></li>
+                </ul>
+            </div>
         </section>
 
         <!-- CHAPTER 1 -->
@@ -403,57 +424,43 @@
             <div class="source-tag">来源：第1课 Basic Concepts</div>
             <h2>第1章：基本概念 (MDP)</h2>
 
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> 在解决问题之前，首先要用数学语言精确地<b>描述问题</b>。MDP 就是强化学习的"语言"。</p>
+            </div>
+
             <h3>1.1 马尔可夫决策过程 (MDP)</h3>
             <div class="box-def">
                 <strong>定义 1.1 (MDP 元组)</strong>
-                <p>一个 MDP 由五元组 $(S, A, P, R, \gamma)$ 定义：</p>
-                <ul>
-                    <li>$S$: 状态空间</li>
-                    <li>$A$: 动作空间</li>
-                    <li>$P$: 状态转移概率 $p(s'|s,a)$</li>
-                    <li>$R$: 奖励函数</li>
-                    <li>$\gamma$: 折扣因子</li>
-                </ul>
+                <p>一个 MDP 由五元组 $(S, A, P, R, \gamma)$ 定义：$S$ 状态空间、$A$ 动作空间、$P$ 转移概率、$R$ 奖励函数、$\gamma$ 折扣因子。</p>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>就把 MDP 想象成玩游戏：</p>
-                <ul>
-                    <li><b>S (状态)</b>：游戏屏幕上显示的画面。</li>
-                    <li><b>A (动作)</b>：手柄上的上下左右键。</li>
-                    <li><b>P (转移)</b>：你按了“跳”，马里奥不一定每次都能跳一样高（可能因为地形滑），这叫不确定性。</li>
-                    <li><b>R (奖励)</b>：吃到金币+100分，碰到乌龟-1条命。</li>
-                    <li><b>$\gamma$ (折扣)</b>：现在的100块钱比明天的100块钱值钱。这告诉我们要“活在当下”，不要为了太远的虚幻目标饿死。</li>
-                </ul>
+                <p>S=画面，A=按键，P=物理引擎（跳多高），R=得分机制，$\gamma$=未来奖励折扣。</p>
             </div>
 
-            <div class="mermaid">
-                graph LR
-                A["Agent (你)"] -- "Action (按键)" --> E["Environment (游戏机)"]
-                E -- "State (新画面)" --> A
-                E -- "Reward (得分)" --> A
-                style A fill:#e1f5fe,stroke:#01579b
-                style E fill:#fff3e0,stroke:#e65100
+            <div class="box-flow">
+                <p><b>1.1 MDP</b> 定义了游戏规则 -> 但我们需要一个"总分"来衡量好坏 -> 这就是 <b>1.2 回报 G</b>。</p>
             </div>
 
             <h3>1.2 回报 (Return)</h3>
             <div class="box-def">
                 <strong>定义 1.2 (折扣回报)</strong>
-                $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} $$
+                $$ G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} $$
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$G_t$: 时刻 $t$ 的总回报 (Return)。我们的最终目标就是让它变大。</li>
-                        <li>$R_{t+1}$: 下一步马上能拿到的即时奖励 (Immediate Reward)。</li>
-                        <li>$\gamma$ (Gamma): 折扣因子，通常取 $0.9 \sim 0.99$。</li>
-                        <li>$\sum$: 求和符号，表示把未来每一步的奖励加起来。</li>
+                        <li>$G_t$: 总回报。RL 的目标就是让它最大。</li>
+                        <li>$\gamma^k$: 折扣因子的 k 次方。越远的奖励折扣越多。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p><b>R (Reward)</b> 是短视的，只看这一步爽不爽。</p>
-                <p><b>G (Return)</b> 是长远的，看的是“这辈子”能赚多少钱。强化学习的目标永远是让 $G$ 最大，而不是 $R$。</p>
+                <p>R 是短视的（这一步爽不爽），G 是长远的（这辈子能赚多少）。RL 的目标是最大化 G，而不是 R。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>1.2 回报 G</b> 是随机变量（运气成分） -> 为了科学评估，我们需要它的"平均值" -> 这就是第2章的 <b>价值函数 V</b>。</p>
             </div>
         </section>
 
@@ -462,44 +469,53 @@
             <div class="source-tag">来源：第2课 Bellman Equation</div>
             <h2>第2章：贝尔曼方程 (Bellman Equation)</h2>
 
-            <h3>2.1 状态价值函数</h3>
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> 第1章定义了"回报 G"是我们的目标。但 G 是随机变量（看脸）。要科学评估策略，需要期望值 -> <b>价值函数 V</b>。</p>
+            </div>
+
+            <h3>2.1 状态价值函数 $v_\pi$</h3>
             <div class="box-def">
-                <strong>定义 2.1 (状态价值 $v_\pi$)</strong>
+                <strong>定义 2.1 (状态价值)</strong>
                 $$ v_\pi(s) = \mathbb{E}_\pi [G_t | S_t=s] $$
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$v_\pi(s)$: 在状态 $s$ 下，按照策略 $\pi$ 玩，能得到的平均分数。</li>
-                        <li>$\mathbb{E}_\pi$: 数学期望 (Expectation)，即“平均值”。因为未来是不确定的，所以只能算平均。</li>
-                        <li>$|$: 条件概率符号，读作“given”，表示“假设当前已经在状态 $s$”。</li>
+                        <li>$v_\pi(s)$: 状态 $s$ 的"身价"。</li>
+                        <li>$\mathbb{E}_\pi$: 按策略 $\pi$ 玩的期望（平均）回报。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p><b>状态价值</b>就是给当前状态“打分”。</p>
-                <p>比如下围棋，你处于一个“双三角”的局势（状态 $s$）。如果你的水平很高（策略 $\pi$ 好），你会觉得这局势赢面大（价值 $v$
-                    高）。如果水平臭，这局势可能就输了。所以价值取决于状态，也取决于你在这个状态下怎么玩（策略）。</p>
+                <p>给当前局势"打分"。围棋高手觉得这局势赢面大（V 高），臭棋篓子可能觉得输了。</p>
             </div>
 
-            <h3>2.2 贝尔曼期望方程</h3>
+            <div class="box-flow">
+                <p><b>2.1 状态价值</b> 只看"在哪" -> 但做决策还要看"做什么" -> 这就是 <b>2.2 动作价值 Q</b>。</p>
+            </div>
+
+            <h3>2.2 动作价值函数 $q_\pi$</h3>
+            <div class="box-def">
+                <strong>定义 2.2 (动作价值)</strong>
+                $$ q_\pi(s, a) = \mathbb{E}_\pi [G_t | S_t=s, A_t=a] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>不仅看"我在哪"，还看"我做了什么"。Q 比 V 更细：它评价的是"在状态 s 做动作 a"这个组合有多好。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>2.2 动作价值 Q</b> 定义好了 -> 但怎么算它们？用递推公式 -> 这就是 <b>2.3 贝尔曼方程</b>。</p>
+            </div>
+
+            <h3>2.3 贝尔曼期望方程</h3>
             <div class="box-thm">
                 <strong>定理 2.1 (递推公式)</strong>
                 $$ v_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} p(s', r | s, a) [r + \gamma v_\pi(s')] $$
-                <div class="formula-breakdown">
-                    <span class="formula-breakdown-title">📝 公式详解：</span>
-                    <ul>
-                        <li>$\sum_a \pi(a|s)$: 第一层求和。遍历所有可能的动作 $a$，并乘上选这个动作的概率。</li>
-                        <li>$\sum_{s', r} p(...)$: 第二层求和。遍历动作 $a$ 导致的所有可能结果。</li>
-                        <li>$r$: 这一步拿到的奖励。</li>
-                        <li>$\gamma v_\pi(s')$: 下一步所在状态的价值 $\times$ 折扣。</li>
-                    </ul>
-                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>这个公式说的是：<b>今天的身价 = 今天的现金 + 明天的预估身价 $\times$ 折扣。</b></p>
-                <p>它把一个长远的复杂计算，拆解成了“这一步”和“剩下所有步”。这是动态规划的核心。</p>
+                <p><b>今天的身价 = 今天的现金 + 明天的身价 × 折扣。</b> 这是动态规划的核心思想。</p>
             </div>
         </section>
 
@@ -508,21 +524,32 @@
             <div class="source-tag">来源：第3课 Bellman Optimality Equation</div>
             <h2>第3章：贝尔曼最优方程 (BOE)</h2>
 
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> 第2章评估的是"给定策略的价值"。但我们真正想要的是"最好策略是多少分" -> 区别在于把 $\sum \pi$ 换成 $\max$。</p>
+            </div>
+
+            <h3>3.1 最优价值函数</h3>
+            <div class="box-def">
+                <strong>定义 3.1</strong>
+                $$ v_*(s) = \max_\pi v_\pi(s), \quad q_*(s,a) = \max_\pi q_\pi(s,a) $$
+            </div>
+
+            <div class="box-flow">
+                <p><b>3.1 最优价值定义</b> 告诉我们"理论天花板" -> 怎么通过递推公式计算？ -> 这就是 <b>3.2 BOE</b>。</p>
+            </div>
+
+            <h3>3.2 贝尔曼最优方程</h3>
             <div class="box-thm">
                 <strong>定理 3.1 (BOE)</strong>
                 $$ v_*(s) = \max_{a} \sum_{s', r} p(s', r | s, a) [r + \gamma v_*(s')] $$
-                <div class="formula-breakdown">
-                    <span class="formula-breakdown-title">📝 公式详解：</span>
-                    <ul>
-                        <li>$v_*(s)$: 理论上的最高价值 (Optimal Value)。</li>
-                        <li>$\max_a$: 最大值算子。这里不再求平均 ($\sum \pi$)，而是假设我们非常聪明，直接挑最好的那个动作。</li>
-                    </ul>
-                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>之前的公式是“给定策略算价值”。现在的公式是“我要寻找神之手（最优策略）”。</p>
-                <p>这里的 $\max_a$ 意思是：在当前状态下，我不再随机出牌，而是<b>只选那个能让未来价值最大的动作</b>。只要我每一步都选最好的，我就能达到理论上的最高分。</p>
+                <p>把期望方程中的"按概率加权"换成"挑最好的"。每一步都做最优决策，就能达到理论最高分。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>3.2 BOE</b> 是个方程，但怎么解它？如果知道 P 和 R，用迭代法 -> 这就是第4章 <b>动态规划 DP</b>。</p>
             </div>
         </section>
 
@@ -530,22 +557,51 @@
         <section id="ch4">
             <div class="source-tag">来源：第4课 Dynamic Programming</div>
             <h2>第4章：动态规划 (DP)</h2>
-            <h3>策略迭代与值迭代</h3>
-            <p>核心利用了上述方程进行迭代计算。</p>
 
-            <div class="mermaid">
-                graph LR
-                PE["评估 (Evaluation)<br>算出当前策略多好"] -- "v" --> PI["改进 (Improvement)<br>把策略变更好"]
-                PI -- "New pi" --> PE
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> 第3章给出了方程 (BOE)，但它是非线性的，很难解。DP 说：如果有上帝视角（知道 $P$、$R$），就可以用迭代法逼近解。</p>
+            </div>
+
+            <h3>4.1 策略评估 (Policy Evaluation)</h3>
+            <div class="box-def">
+                $$ v_{k+1}(s) = \sum_a \pi(a|s) \sum_{s',r} p(s',r|s,a)[r + \gamma v_k(s')] $$
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>这就好比练武功：</p>
-                <ol>
-                    <li><b>评估</b>：先按现在的套路打一套，看看得分多少。</li>
-                    <li><b>改进</b>：发现这招“黑虎掏心”得分高，那以后这招多用点。</li>
-                    <li><b>循环</b>：一直练，直到再怎么改也提高不了得分了，你就成宗师了。</li>
-                </ol>
+                <p>给定一个策略（比如"随机走"），反复迭代这个公式，就能算出它的价值。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>4.1 策略评估</b> 告诉我们策略有多好 -> 如何变得更好？ -> 这就是 <b>4.2 策略改进</b>。</p>
+            </div>
+
+            <h3>4.2 策略改进 (Policy Improvement)</h3>
+            <div class="box-thm">
+                $$ \pi'(s) = \arg\max_a q_\pi(s, a) $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>知道了价值，就可以"贪心"：在每个状态选 Q 值最大的动作。这保证策略不会变差。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>4.2 改进</b> + <b>4.1 评估</b> 交替进行 = <b>4.3 策略迭代</b>。或者直接用 BOE 迭代 = <b>4.4 值迭代</b>。</p>
+            </div>
+
+            <h3>4.3 策略迭代 (Policy Iteration)</h3>
+            <div class="mermaid">
+                graph LR
+                PE["评估 (E)"] -- "v" --> PI["改进 (I)"]
+                PI -- "new π" --> PE
+            </div>
+
+            <h3>4.4 值迭代 (Value Iteration)</h3>
+            <div class="box-def">
+                $$ v_{k+1}(s) = \max_a \sum_{s', r} p(s', r | s, a) [r + \gamma v_k(s')] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>策略迭代比较稳，值迭代比较急。两者殊途同归，都能收敛到最优。</p>
             </div>
         </section>
 
@@ -554,22 +610,71 @@
             <div class="source-tag">来源：第5课 Monte Carlo Methods</div>
             <h2>第5章：蒙特卡洛方法 (MC)</h2>
 
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> DP 需要知道 $P$ 和 $R$（上帝视角）。现实中我们往往不知道！MC 说：不知道就<b>试</b>，试很多次取平均。</p>
+            </div>
+
+            <h3>5.1 MC 策略评估</h3>
             <div class="box-def">
                 $$ v_\pi(s) \approx \frac{1}{N} \sum_{i=1}^N G_i $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>不知道硬币正面概率？扔1000次数数。不知道状态价值？玩1000局取平均。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>5.1 评估</b> 算出了 V/Q -> 如何改进策略？还是贪心 -> 但要注意 <b>5.2 探索与利用</b>。</p>
+            </div>
+
+            <h3>5.2 探索与利用 (Exploration vs Exploitation)</h3>
+            <div class="box-def">
+                <p><b>ε-greedy 策略</b>：以 $1-\epsilon$ 概率选最优动作，以 $\epsilon$ 概率随机选。</p>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>只去熟悉的餐厅（利用）可能错过更好的店。偶尔尝试新店（探索）才能发现美食。ε-greedy 就是"大部分时间吃熟悉的，小概率尝新"。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6 (NEWLY ADDED) -->
+        <section id="ch6">
+            <div class="source-tag">来源：第6课 Stochastic Approximation</div>
+            <h2>第6章：随机逼近与 SGD</h2>
+
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> MC 需要存储所有 $G_i$ 再取平均，内存占用大。有没有办法<b>边走边算</b>？随机逼近 (SA) / SGD 就是答案。这是 TD 的数学基础。</p>
+            </div>
+
+            <h3>6.1 Robbins-Monro 算法</h3>
+            <div class="box-def">
+                <strong>迭代公式</strong>
+                $$ w_{k+1} = w_k - \alpha_k \tilde{g}(w_k, \eta_k) $$
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$N$: 玩游戏的总次数。</li>
-                        <li>$G_i$: 第 $i$ 次玩游戏得到的总分。</li>
-                        <li>$\frac{1}{N} \sum$: 算术平均值。</li>
+                        <li>$w_k$: 第 k 步的估计值。</li>
+                        <li>$\alpha_k$: 步长（学习率），需要满足一定条件才能收敛。</li>
+                        <li>$\tilde{g}$: 带噪声的梯度估计。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>如果你不知道这枚硬币正面朝上的概率是多少（不知道 $P$），怎么办？</p>
-                <p><b>扔1000次，数数有多少次正面。</b></p>
-                <p>蒙特卡洛就是这个意思：我不懂物理公式，那我就亲自去试玩1000局游戏，把所有得分记下来取平均，那个平均分就是价值。</p>
+                <p>想找一座山的最低点，但大雾天看不清。每次只能看脚下哪边低，就往那边走一小步。走很多步后，大概率能到达谷底。这就是随机逼近的核心思想。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>6.1 RM算法</b> 是理论基础 -> 用在神经网络上 = <b>6.2 SGD</b>。用在价值估计上 = 第7章 <b>TD</b>。</p>
+            </div>
+
+            <h3>6.2 随机梯度下降 (SGD)</h3>
+            <div class="box-def">
+                $$ \theta_{t+1} = \theta_t - \alpha \nabla_\theta L(\theta_t; x_t, y_t) $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>用一个样本（或一小批）估计梯度，而不是全部数据。速度快，内存省，是深度学习的基石。</p>
             </div>
         </section>
 
@@ -578,43 +683,48 @@
             <div class="source-tag">来源：第7课 Temporal Difference Learning</div>
             <h2>第7章：时序差分 (TD)</h2>
 
-            <h3>7.1 TD 公式</h3>
-            <div class="box-def">
-                $$ V(S_t) \leftarrow V(S_t) + \alpha [ \underbrace{R_{t+1} + \gamma V(S_{t+1})}_{\text{TD Target}} -
-                V(S_t) ] $$
-                <div class="formula-breakdown">
-                    <span class="formula-breakdown-title">📝 公式详解：</span>
-                    <ul>
-                        <li>$\leftarrow$: 赋值更新。每次走一步，就更新一次 $V$。</li>
-                        <li>$\alpha$ (Alpha): 学习率 (Learning Rate)。决定了我们多大程度上相信“新消息”。</li>
-                        <li>$R_{t+1} + \gamma V(S_{t+1})$: <b>TD Target</b>。基于真实奖励 $R$ 和下一步估计 $V$ 组成的“新估计”。</li>
-                        <li>$[\dots] - V(S_t)$: <b>TD Error</b> (误差)。新估计减去旧估计，表示我们之前的预测“偏”了多少。</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="box-easy">
-                <strong>通俗解读</strong>
-                <p>假设你预测回家要走30分钟 ($V(S_t) = 30$)。</p>
-                <p>你走了5分钟到了地铁站 ($R=5$)，发现还要坐20分钟地铁 ($V(S_{t+1})=20$)。</p>
-                <p>这时候你的<b>新预测</b>是 $5+20=25$ 分钟。</p>
-                <p>你的<b>旧预测</b>是 30 分钟。</p>
-                <p><b>TD 就是：用“新预测”去修正“旧预测”。</b> 你不用等到真回到家了才发现自己预测错了，半路就能改。</p>
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> MC 必须等到游戏结束才能更新（慢）。TD 结合了 DP 的 Bootstrapping 和 MC 的 Model-free，可以<b>走一步更新一步</b>（快）。
+                </p>
             </div>
 
-            <h3>7.2 Q-Learning</h3>
+            <h3>7.1 TD(0) 公式</h3>
             <div class="box-def">
-                $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma \max_{a} Q(S', a) - Q(S,A)] $$
+                $$ V(S_t) \leftarrow V(S_t) + \alpha [ R_{t+1} + \gamma V(S_{t+1}) - V(S_t) ] $$
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$Q(S,A)$: 动作价值函数。表示在状态 $S$ 做动作 $A$ 有多好。</li>
-                        <li>$\max_a Q(S', a)$: 想象下一步到了 $S'$ 后，我们会选最好的动作 $a$。这是 Q-Learning “贪婪”和“大胆”的体现。</li>
+                        <li>$\alpha$: 学习率。</li>
+                        <li>$R_{t+1} + \gamma V(S_{t+1})$: TD Target（新估计）。</li>
+                        <li>$[\dots] - V(S_t)$: TD Error（估计偏差）。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>Q-Learning 特别“自信”。不管我现在是不是在乱走（探索），我在学习的时候，总是假设我下一步会走得<b>完美</b> ($\max Q$)。这让它可以在犯错的同时，依然学到正确的知识。</p>
+                <p>预测回家30分钟。走5分钟到地铁站，发现还需20分钟，新预测25分钟。TD 就是用新预测修正旧预测，不用等到真回家。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>7.1 TD(0)</b> 更新 V -> 如果要更新 Q 并找最优？ -> 这就是 <b>7.2 SARSA</b> 和 <b>7.3 Q-Learning</b>。</p>
+            </div>
+
+            <h3>7.2 SARSA (On-Policy)</h3>
+            <div class="box-def">
+                $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma Q(S', A') - Q(S,A)] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>我怎么走，就怎么学。下一步选什么动作 $A'$，就用它的 Q 来更新。比较"老实"。</p>
+            </div>
+
+            <h3>7.3 Q-Learning (Off-Policy)</h3>
+            <div class="box-def">
+                $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma \max_{a} Q(S', a) - Q(S,A)] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>Q-Learning 很"自信"：不管我下一步实际选什么，学习时总假设我会选最优 ($\max Q$)。所以它可以边犯错边学到正确知识。</p>
             </div>
         </section>
 
@@ -623,36 +733,34 @@
             <div class="source-tag">来源：第8课 Value Function Approximation</div>
             <h2>第8章：值函数近似 (DQN)</h2>
 
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> 表格法只能处理小问题。状态无限多（如图像）怎么办？用<b>函数（神经网络）</b>来拟合 Q 表。</p>
+            </div>
+
+            <h3>8.1 函数近似</h3>
             <div class="box-def">
-                $$ J(w) = \mathbb{E}_{\pi} [ (v_\pi(S) - \hat{v}(S, w))^2 ] $$
-                <div class="formula-breakdown">
-                    <span class="formula-breakdown-title">📝 公式详解：</span>
-                    <ul>
-                        <li>$J(w)$: 损失函数 (Loss Function)，我们要最小化它。</li>
-                        <li>$w$: 神经网络的参数（权重）。</li>
-                        <li>$v_\pi(S)$: 真实的价值（通常用 TD Target 代替）。</li>
-                        <li>$\hat{v}(S, w)$: 神经网络预测出来的价值。</li>
-                        <li>$(\dots)^2$: 均方误差 (MSE)。</li>
-                    </ul>
-                </div>
+                $$ \hat{v}(s, w) \approx v_\pi(s) $$
+                <p>用参数 $w$ 的函数来估计价值，把无限状态压缩到有限参数。</p>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>之前的“表格法”是一个萝卜一个坑，每个状态存一个分。</p>
-                <p>但是像王者荣耀这种游戏，屏幕上的像素组合比宇宙原子还多，表格存不下。所以我们用<b>神经网络</b>（函数）来记分数。就像不用背下所有乘法结果，学会“乘法口诀”就能算出所有题。</p>
+                <p>不用背下所有乘法结果，学会"乘法口诀"就能算出所有题。神经网络就是那个"口诀"。</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>8.1 函数近似</b> 引入了神经网络 -> 训练不稳定怎么办？ -> 需要 <b>8.2 DQN 的技巧</b>。</p>
             </div>
 
             <h3>8.2 DQN 的两大法宝</h3>
             <div class="box-def">
                 <ul>
-                    <li><b>Experience Replay (经验回放)</b></li>
-                    <li><b>Target Network (目标网络)</b></li>
+                    <li><b>Experience Replay (经验回放)</b>：打破样本相关性。</li>
+                    <li><b>Target Network (目标网络)</b>：稳定训练目标。</li>
                 </ul>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p><b>经验回放</b>：像是“做错题本”。不仅刚做完题要改，以前做过的错题也要拿出来反复复习，防止忘了旧的学了新的，而且能打乱顺序，防止思维定势。</p>
-                <p><b>目标网络</b>：就像射箭。如果靶子一直动（Target 一直变），很难射准。Target Network 就是把靶子固定一会儿，让你先练练，练好了再挪靶子。</p>
+                <p>经验回放 = 做错题本，复习历史错题。目标网络 = 射箭时把靶子固定一会儿。</p>
             </div>
         </section>
 
@@ -661,25 +769,26 @@
             <div class="source-tag">来源：第9课 Policy Gradient</div>
             <h2>第9章：策略梯度 (Policy Gradient)</h2>
 
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> DQN 只能处理离散动作（按键）。机器人关节是连续动作！我们需要<b>直接优化策略</b> $\pi(a|s)$，而不是先算 Q 再贪心。</p>
+            </div>
+
+            <h3>9.1 策略梯度定理</h3>
             <div class="box-thm">
+                $$ \nabla_\theta J(\theta) \propto \mathbb{E}_\pi [ Q^\pi(s,a) \nabla_\theta \ln \pi(a|s, \theta) ] $$
+            </div>
+
+            <div class="box-flow">
+                <p><b>9.1 策略梯度定理</b> 是理论 -> 实际怎么估计 Q？用 MC 回报 -> 这就是 <b>9.2 REINFORCE</b>。</p>
+            </div>
+
+            <h3>9.2 REINFORCE</h3>
+            <div class="box-def">
                 $$ \theta \leftarrow \theta + \alpha G_t \nabla \ln \pi(A_t|S_t, \theta) $$
-                <div class="formula-breakdown">
-                    <span class="formula-breakdown-title">📝 公式详解：</span>
-                    <ul>
-                        <li>$\theta$: 策略网络的参数。</li>
-                        <li>$G_t$: 这一局得了多少分（权重）。分越高，更新力度越大。</li>
-                        <li>$\nabla$: 梯度符号 (Gradient)。指向让函数值变大的方向。</li>
-                        <li>$\ln \pi$: 对概率取对数。</li>
-                        <li>整体含义：如果是高分局 ($G_t$ 大)，就大力调整参数 $\theta$，让动作 $A_t$ 出现的概率 ($\pi$) 变大。</li>
-                    </ul>
-                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>这句话翻译过来就是：</p>
-                <p>如果这一局游戏赢了 ($G_t$ 高)，那么刚才那一连串动作出现的概率 ($\pi$) 都要<b>增加</b>。</p>
-                <p>如果输了，那些动作的概率就要<b>减小</b>。</p>
-                <p>简单粗暴，但非常有效。</p>
+                <p>这局赢了 ($G_t$ 高)，就增加这些动作的概率。输了就减少。简单粗暴但有效。</p>
             </div>
         </section>
 
@@ -688,23 +797,38 @@
             <div class="source-tag">来源：第10课 Actor-Critic</div>
             <h2>第10章：Actor-Critic</h2>
 
+            <div class="box-logic">
+                <p><b>🔗 承上启下：</b> REINFORCE 用整局回报 $G_t$，方差太大。如果用 TD 思想实时打分呢？这就诞生了 Actor-Critic。</p>
+            </div>
+
+            <h3>10.1 架构</h3>
             <div class="mermaid">
                 graph LR
-                Actor["Actor (演员)"] -- "动作" --> Env
-                Env -- "奖励" --> Critic["Critic (评委)"]
-                Critic -- "打分" --> Actor
+                Actor["Actor (演员)<br>输出动作"] -- "action" --> Env["Environment"]
+                Env -- "reward, state'" --> Critic["Critic (评委)<br>实时打分"]
+                Critic -- "TD Error" --> Actor
+                style Actor fill:#e1f5fe,stroke:#01579b
+                style Critic fill:#fff3e0,stroke:#e65100
+            </div>
+
+            <div class="box-flow">
+                <p><b>Actor</b> 负责表演（策略）-> <b>Critic</b> 负责打分（价值估计）-> 两者配合就是 <b>10.2 A2C</b>。</p>
+            </div>
+
+            <h3>10.2 Advantage Actor-Critic (A2C)</h3>
+            <div class="box-def">
+                $$ \theta \leftarrow \theta + \alpha A(s,a) \nabla \ln \pi(a|s, \theta) $$
+                <p>其中 Advantage $A(s,a) = Q(s,a) - V(s) \approx r + \gamma V(s') - V(s)$ (TD Error)。</p>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>Policy Gradient 像是一个盲人在练习投篮，全靠最后进没进球（MC 回报）来调整，反馈太慢太随机。</p>
-                <p>Actor-Critic 请了个教练 (Critic)。</p>
-                <p><b>Actor (演员)</b>：负责表演（做动作）。</p>
-                <p><b>Critic (评委)</b>：负责打分。动作刚做完，评委就说“这动作姿势不对，扣分”。演员马上就能改，不用等到比赛结束。</p>
+                <p>盲人投篮靠最后进没进球调整（REINFORCE）。有了教练（Critic），每个动作做完马上给反馈，学得更快更稳。</p>
             </div>
         </section>
 
         <footer>
             <p>整理自 赵世钰《强化学习的数学原理》系列课程。</p>
+            <p>Built with ❤️ by AI Assistant</p>
         </footer>
 
     </main>
