@@ -242,7 +242,6 @@
             font-weight: bold;
         }
 
-        /* NEW: Section Flow Box */
         .box-flow {
             background-color: #e8eaf6;
             border-left: 5px solid #5c6bc0;
@@ -431,11 +430,19 @@
             <h3>1.1 马尔可夫决策过程 (MDP)</h3>
             <div class="box-def">
                 <strong>定义 1.1 (MDP 元组)</strong>
-                <p>一个 MDP 由五元组 $(S, A, P, R, \gamma)$ 定义：$S$ 状态空间、$A$ 动作空间、$P$ 转移概率、$R$ 奖励函数、$\gamma$ 折扣因子。</p>
+                <p>一个 MDP 由五元组 $(S, A, P, R, \gamma)$ 定义。</p>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>S=画面，A=按键，P=物理引擎（跳多高），R=得分机制，$\gamma$=未来奖励折扣。</p>
+                <p>我们把所有游戏、生活中的决策都抽象成这五个元素：</p>
+                <ul>
+                    <li><b>S (状态 - 处境)</b>：你在哪？环境长啥样？比如王者荣耀里的"三路兵线位置"、"队友是否存活"。</li>
+                    <li><b>A (动作 - 抉择)</b>：你能干啥？比如"进攻"、"撤退"、"打龙"。</li>
+                    <li><b>P (转移 - 物理法则)</b>：你做了动作后，世界会怎么变？你按了"开火"，子弹一定能打中吗？不一定，因为有后坐力（概率性）。这就是 P 所描述的不确定性。</li>
+                    <li><b>R (奖励 - 反馈)</b>：做得好有糖吃（+1分），做得差挨板子（-1分）。这是指导我们学习的唯一信号。</li>
+                    <li><b>$\gamma$ (折扣 - 耐心)</b>：现在的100块肯定比明天的100块值钱。$\gamma=0$ 表示我只在乎现在爽不爽（短视）；$\gamma=1$
+                        表示我极度耐心，为了未来的大饼可以饿死现在。通常我们取 0.9，表示稍微看重长远。</li>
+                </ul>
             </div>
 
             <div class="box-flow">
@@ -449,14 +456,18 @@
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$G_t$: 总回报。RL 的目标就是让它最大。</li>
-                        <li>$\gamma^k$: 折扣因子的 k 次方。越远的奖励折扣越多。</li>
+                        <li>$G_t$: <b>总回报</b>。不仅仅是这一步赚了多少，而是从现在开始到游戏结束，我总共能赚多少（带折扣）。RL 的终极目标就是让这个 $G_t$ 最大。</li>
+                        <li>$R_{t+1}$: <b>即时奖励</b>。就像这一顿饭好不好吃。</li>
+                        <li>$\gamma^k$: 越往后的奖励，打折越狠。意味着未来的大饼越不可信，越不值钱。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>R 是短视的（这一步爽不爽），G 是长远的（这辈子能赚多少）。RL 的目标是最大化 G，而不是 R。</p>
+                <p>想象你在玩《超级马里奥》：</p>
+                <p><b>即时奖励 ($R$)</b>：你头顶了一个砖块，获得10分。开心吗？开心。但如果你为了顶这个砖块掉坑里死了，值吗？不值。</p>
+                <p><b>回报 ($G$)</b>：是你从现在开始，一直到通关（或死掉）为止，吃到的所有金币总和。强化学习不care你这一步顶不顶砖块，它care的是你能不能<b>活着拿到最多金币</b>。</p>
+                <p>所以，<b>R 是战术，G 是战略。</b></p>
             </div>
 
             <div class="box-flow">
@@ -480,14 +491,17 @@
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$v_\pi(s)$: 状态 $s$ 的"身价"。</li>
-                        <li>$\mathbb{E}_\pi$: 按策略 $\pi$ 玩的期望（平均）回报。</li>
+                        <li>$v_\pi(s)$: 状态 $s$ 的"身价"。在这个位置，我平均能拿多少分。</li>
+                        <li>$\mathbb{E}_\pi$: <b>数学期望</b>。因为有随机性（P不确定，策略$\pi$也不确定），我们没法算准"一次"，只能算"平均水平"。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>给当前局势"打分"。围棋高手觉得这局势赢面大（V 高），臭棋篓子可能觉得输了。</p>
+                <p><b>状态价值</b>就是给当前的局势"估价"。</p>
+                <p>比如玩斗地主。你手里拿着"王炸+四个2"（状态 $S$）。虽然还没打完（游戏没结束，$G$ 未知），但你心里知道："这把稳了！"。你会给这个状态打个高分（比如 v=100）。</p>
+                <p>如果你手里是"34568"，你会觉得"这把悬了"，估值就很低（v=10）。</p>
+                <p>注意：这个估值取决于你的牌技（策略 $\pi$）。如果是高手拿烂牌，可能估值也不低；小白拿好牌也可能打输。</p>
             </div>
 
             <div class="box-flow">
@@ -498,10 +512,21 @@
             <div class="box-def">
                 <strong>定义 2.2 (动作价值)</strong>
                 $$ q_\pi(s, a) = \mathbb{E}_\pi [G_t | S_t=s, A_t=a] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$q_\pi(s, a)$: 在状态 $s$ 做了动作 $a$ 之后，且后续继续按照 $\pi$ 玩，平均能拿多少分。</li>
+                        <li>它比 $v(s)$ 多了个 $a$，所以它能够直接指导我们该选哪个动作（选那个 Q 最大的）。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>不仅看"我在哪"，还看"我做了什么"。Q 比 V 更细：它评价的是"在状态 s 做动作 a"这个组合有多好。</p>
+                <p>$V(s)$ 是评价"处境"，$Q(s, a)$ 是评价"招数"。</p>
+                <p>比如在十字路口（状态 $s$）。</p>
+                <p>- 动作 $a_1$：向左转 -> 堵车（分低）。</p>
+                <p>- 动作 $a_2$：向右转 -> 畅通（分高）。</p>
+                <p>Q函数就是告诉你：在这儿，向左转值50分，向右转值90分。那你肯定选右转。</p>
             </div>
 
             <div class="box-flow">
@@ -512,10 +537,22 @@
             <div class="box-thm">
                 <strong>定理 2.1 (递推公式)</strong>
                 $$ v_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} p(s', r | s, a) [r + \gamma v_\pi(s')] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$v_\pi(s)$: 今天的价值。</li>
+                        <li>$r$: 今天当下拿到的钱。</li>
+                        <li>$\gamma v_\pi(s')$: 明天的价值（打了个折）。</li>
+                        <li>$\sum$: 把所有可能发生的明天，按概率加权求和。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p><b>今天的身价 = 今天的现金 + 明天的身价 × 折扣。</b> 这是动态规划的核心思想。</p>
+                <p>这个公式深刻地揭示了<b>价值的来源</b>：</p>
+                <p><b>今天的身价 = 手里的现金 + 未来身价的折现。</b></p>
+                <p>这就像你评估一家公司的市值：不仅看它今年甚至今天赚了多少钱（$r$），更要看它未来的潜力（$\gamma
+                    v(s')$）。这就把一个无限长的问题，转化成了"今天"和"明天"的关系，让我们能够用迭代法求解。</p>
             </div>
         </section>
 
@@ -542,14 +579,20 @@
             <div class="box-thm">
                 <strong>定理 3.1 (BOE)</strong>
                 $$ v_*(s) = \max_{a} \sum_{s', r} p(s', r | s, a) [r + \gamma v_*(s')] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$v_*(s)$: 理论上的最高身价（神之操作下的得分）。</li>
+                        <li>$\max_a$: <b>最大化</b>。这里不再是"按概率求和"（期望），而是"我只选那个能让我未来分最高的动作"。</li>
+                        <li>$v_*(s')$: 假设明天我也是用神之操作（Bootstrapping）。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>把期望方程中的"按概率加权"换成"挑最好的"。每一步都做最优决策，就能达到理论最高分。</p>
-            </div>
-
-            <div class="box-flow">
-                <p><b>3.2 BOE</b> 是个方程，但怎么解它？如果知道 P 和 R，用迭代法 -> 这就是第4章 <b>动态规划 DP</b>。</p>
+                <p>之前的 Bellman Equation 是描述"凡人"的：我很平庸，有时走左有时走右，所以我算个平均分。</p>
+                <p>Bellman Optimality Equation (BOE) 是描述"神"的：<b>我每一步都做出了最正确的选择。</b></p>
+                <p>公式里的 $\max$ 就是这种"神性"的体现：在当前路口，我绝对不会瞎选，我一定选那条通往金矿的路。只要我每一步都贪心地选最好的，我的总分就是全宇宙最高的。</p>
             </div>
         </section>
 
@@ -565,10 +608,22 @@
             <h3>4.1 策略评估 (Policy Evaluation)</h3>
             <div class="box-def">
                 $$ v_{k+1}(s) = \sum_a \pi(a|s) \sum_{s',r} p(s',r|s,a)[r + \gamma v_k(s')] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$v_k$: 第 k 轮的估值表。</li>
+                        <li>$v_{k+1}$: 第 k+1 轮的估值表。</li>
+                        <li>$\leftarrow$: 通过不断把 $v_k$ 代入右边算出 $v_{k+1}$，数值会慢慢稳定下来，最终变成真实的 $v_\pi$。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>给定一个策略（比如"随机走"），反复迭代这个公式，就能算出它的价值。</p>
+                <p>这就像是<b>"互相打听身价"</b>。</p>
+                <p>一开始大家都是瞎猜的（比如都猜0分）。</p>
+                <p>第一轮：你看看你手里拿了多少工资 $r$，再问问你邻居（下一站）瞎猜的身价 $v_0$。</p>
+                <p>第二轮：你邻居通过第一轮更新，好像准了一点。你再根据他的新身价 $v_1$ 更新自己。</p>
+                <p>反复很多轮之后，大家的估价就通过这种"口口相传"传遍了全图，最终所有人的估值都准了。</p>
             </div>
 
             <div class="box-flow">
@@ -578,30 +633,38 @@
             <h3>4.2 策略改进 (Policy Improvement)</h3>
             <div class="box-thm">
                 $$ \pi'(s) = \arg\max_a q_\pi(s, a) $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$q_\pi(s, a)$: 既然我已经评估出了当前的 $v$，我就能算出每个动作的 $q$。</li>
+                        <li>$\arg\max_a$: 我不再随机了，我把那个分最高的动作定为我的新策略 $\pi'$。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>知道了价值，就可以"贪心"：在每个状态选 Q 值最大的动作。这保证策略不会变差。</p>
+                <p>这就是<b>"择优而从"</b>。</p>
+                <p>评估完了发现：走左边预期50分，走右边预期80分。</p>
+                <p>那我傻啊我还走左边？我立马改策略：<b>以后到这就是无脑走右边！</b></p>
+                <p>这就是策略改进 — 只要我贪心地选好的，新策略一定比旧策略强。</p>
             </div>
 
-            <div class="box-flow">
-                <p><b>4.2 改进</b> + <b>4.1 评估</b> 交替进行 = <b>4.3 策略迭代</b>。或者直接用 BOE 迭代 = <b>4.4 值迭代</b>。</p>
-            </div>
-
-            <h3>4.3 策略迭代 (Policy Iteration)</h3>
-            <div class="mermaid">
-                graph LR
-                PE["评估 (E)"] -- "v" --> PI["改进 (I)"]
-                PI -- "new π" --> PE
-            </div>
-
-            <h3>4.4 值迭代 (Value Iteration)</h3>
+            <h3>4.3 策略迭代 与 4.4 值迭代</h3>
             <div class="box-def">
+                <strong>值迭代公式：</strong>
                 $$ v_{k+1}(s) = \max_a \sum_{s', r} p(s', r | s, a) [r + \gamma v_k(s')] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>这里直接用了 $\max$，相当于把"评估"和"改进"合二为一了。</li>
+                        <li>不管策略是啥，我每次更新都假设我做当下最牛的动作。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>策略迭代比较稳，值迭代比较急。两者殊途同归，都能收敛到最优。</p>
+                <p><b>策略迭代 (PI)</b> 比较稳重：先彻底搞清楚现在的水平（评估至收敛），再改一点点毛病（改进）。慢工出细活。</p>
+                <p><b>值迭代 (VI)</b> 比较急躁：我没空等你算准，我估个大概其，觉得右边好我就先往右边偏。边算边改。虽然过程比较混乱，但最终也能殊途同归找到最优解。</p>
             </div>
         </section>
 
@@ -617,14 +680,21 @@
             <h3>5.1 MC 策略评估</h3>
             <div class="box-def">
                 $$ v_\pi(s) \approx \frac{1}{N} \sum_{i=1}^N G_i $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$N$: 我从这个状态出发，玩了多少局游戏。</li>
+                        <li>$G_i$: 第 i 局游戏实际拿到的总分。</li>
+                        <li>$\frac{1}{N} \sum$: 算术平均。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>不知道硬币正面概率？扔1000次数数。不知道状态价值？玩1000局取平均。</p>
-            </div>
-
-            <div class="box-flow">
-                <p><b>5.1 评估</b> 算出了 V/Q -> 如何改进策略？还是贪心 -> 但要注意 <b>5.2 探索与利用</b>。</p>
+                <p>你想知道抛硬币正面的概率，但你不会算物理公式（没有 $P$）。怎么办？</p>
+                <p>简单：<b>抛1000次，数数多少次正面。</b></p>
+                <p>这时候，大数定律告诉你：只要你试的次数够多，你的统计结果就等于真实概率。</p>
+                <p>这就是蒙特卡洛：<b>大力出奇迹。</b> 不懂原理没关系，我拿数据（经验）堆出来。</p>
             </div>
 
             <h3>5.2 探索与利用 (Exploration vs Exploitation)</h3>
@@ -633,11 +703,14 @@
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>只去熟悉的餐厅（利用）可能错过更好的店。偶尔尝试新店（探索）才能发现美食。ε-greedy 就是"大部分时间吃熟悉的，小概率尝新"。</p>
+                <p>这是一个<b>"吃货的困境"</b>：</p>
+                <p>你家楼下有家馆子很好吃（Exploitation - 利用）。</p>
+                <p>但是如果你天天只吃这一家，你就永远不知道隔壁新开的那家是不是更好吃。</p>
+                <p>所以你必须偶尔（$\epsilon$ 的概率）去尝试一下新馆子，或者瞎吃一家（Exploration - 探索）。哪怕可能踩雷，但为了发现潜在的米其林三星，这是值得的。</p>
             </div>
         </section>
 
-        <!-- CHAPTER 6 (NEWLY ADDED) -->
+        <!-- CHAPTER 6 -->
         <section id="ch6">
             <div class="source-tag">来源：第6课 Stochastic Approximation</div>
             <h2>第6章：随机逼近与 SGD</h2>
@@ -653,28 +726,35 @@
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$w_k$: 第 k 步的估计值。</li>
-                        <li>$\alpha_k$: 步长（学习率），需要满足一定条件才能收敛。</li>
-                        <li>$\tilde{g}$: 带噪声的梯度估计。</li>
+                        <li>$w_k$: 当前的猜测值。</li>
+                        <li>$\alpha_k$: 步长。如果步长太大，会震荡；如果太小，走不动。</li>
+                        <li>$\tilde{g}$: 加上了噪声的梯度方向（因为我们只有样本，没有全貌）。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>想找一座山的最低点，但大雾天看不清。每次只能看脚下哪边低，就往那边走一小步。走很多步后，大概率能到达谷底。这就是随机逼近的核心思想。</p>
-            </div>
-
-            <div class="box-flow">
-                <p><b>6.1 RM算法</b> 是理论基础 -> 用在神经网络上 = <b>6.2 SGD</b>。用在价值估计上 = 第7章 <b>TD</b>。</p>
+                <p>想象你在大雾天找下山的路（找最小值）。看不清地形，只能看清脚下。</p>
+                <p>你试探性地往低处走一步（$w - \alpha g$）。</p>
+                <p>虽然每一步因为有雾（噪声）可能走歪了，但只要你大方向是对的，且步子越来越小（$\alpha \to 0$），你最终一定能晃晃悠悠地走到谷底。</p>
+                <p><b>这就是"增量式更新"：不必等所有数据到齐，来一个我更正一点。</b></p>
             </div>
 
             <h3>6.2 随机梯度下降 (SGD)</h3>
             <div class="box-def">
                 $$ \theta_{t+1} = \theta_t - \alpha \nabla_\theta L(\theta_t; x_t, y_t) $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$\nabla L$: 损失函数的梯度。</li>
+                        <li>$(x_t, y_t)$: 仅仅使用一个样本计算梯度，而不是用整个数据集 (Batch)。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>用一个样本（或一小批）估计梯度，而不是全部数据。速度快，内存省，是深度学习的基石。</p>
+                <p>SGD 就是深度学习界的 Robbins-Monro 算法。</p>
+                <p>要是每次算梯度都要把几百万张图片过一遍，电脑早死机了。SGD 说：虽然单张图片的梯度很不准（有噪声），但我看一张图就改一次参数，改它个几亿次，最终效果跟全看一遍是一样的，而且快得多！</p>
             </div>
         </section>
 
@@ -694,37 +774,55 @@
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>$\alpha$: 学习率。</li>
-                        <li>$R_{t+1} + \gamma V(S_{t+1})$: TD Target（新估计）。</li>
-                        <li>$[\dots] - V(S_t)$: TD Error（估计偏差）。</li>
+                        <li>$V(S_t)$: 旧的预测。</li>
+                        <li>$R_{t+1} + \gamma V(S_{t+1})$: <b>TD Target</b>。这是一种"更靠谱一点"的新猜测。因为它包含了真实发生了一步的奖励 $R$。</li>
+                        <li>$[\dots]$: 括号里的是 <b>TD Error</b>（偏差）。即"现实打脸了预测"。</li>
+                        <li>$\alpha$: 认错态度。如果 $\alpha$ 很大，说明我听到新消息立马大幅修改旧观念。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>预测回家30分钟。走5分钟到地铁站，发现还需20分钟，新预测25分钟。TD 就是用新预测修正旧预测，不用等到真回家。</p>
-            </div>
-
-            <div class="box-flow">
-                <p><b>7.1 TD(0)</b> 更新 V -> 如果要更新 Q 并找最优？ -> 这就是 <b>7.2 SARSA</b> 和 <b>7.3 Q-Learning</b>。</p>
+                <p>MC 是<b>"秋后算账"</b>：非要等到人死了盖棺定论，才回去评价他这一生。</p>
+                <p>TD 是<b>"随机应变"</b>：</p>
+                <p>你预测开车回家要30分钟。</p>
+                <p>开了5分钟到路口，发现前面修路堵死。你立马修正预测：现在看来至少还要40分钟（总共45分钟）。</p>
+                <p>你不需要真的开回家，你只需要开到"下一个路口"，有了新的信息，就能修正之前的预测。这就是 TD：<b>Bootstrapping（用估计修正估计）</b>。</p>
             </div>
 
             <h3>7.2 SARSA (On-Policy)</h3>
             <div class="box-def">
                 $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma Q(S', A') - Q(S,A)] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$S, A, R, S', A'$: 这个公式用到了五元组，所以叫 SARSA。</li>
+                        <li>$Q(S', A')$: 这里的 $A'$ 是我<b>实际</b>走出这一步后，下一步<b>真的</b>打算做的动作。很老实。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>我怎么走，就怎么学。下一步选什么动作 $A'$，就用它的 Q 来更新。比较"老实"。</p>
+                <p>SARSA 是个<b>"老实人"</b>。</p>
+                <p>它在学的时候，会由于胆小（$\epsilon$-greedy）而偶尔走错路（探索）。但在更新 Q 值的时候，它会把这个"走错路"的后果老老实实记下来。</p>
+                <p>因次，SARSA 比较谨慎，会尽量避开悬崖边走，因为它怕自己手抖掉下去。</p>
             </div>
 
             <h3>7.3 Q-Learning (Off-Policy)</h3>
             <div class="box-def">
                 $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma \max_{a} Q(S', a) - Q(S,A)] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$\max_{a} Q(S', a)$: 这里的区别在于，不管我下一步实际做了啥（哪怕我乱走了），在更新计算时，我<b>假设</b>我下一步会做最完美的动作。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>Q-Learning 很"自信"：不管我下一步实际选什么，学习时总假设我会选最优 ($\max Q$)。所以它可以边犯错边学到正确知识。</p>
+                <p>Q-Learning 是个<b>"梦想家"</b>。</p>
+                <p>虽然我现在在瞎走（探索），但我心怀理想。我认为我每一步之后，都会走上最优路径 ($\max Q$)。</p>
+                <p>所以 Q-Learning 不怕走悬崖边。它想："虽然我可能会手抖掉下去，但只要不掉下去，那条路就是最近的！" 所以它会找到更优的路径，但也比 SARSA 更鲁莽。</p>
             </div>
         </section>
 
@@ -740,27 +838,35 @@
             <h3>8.1 函数近似</h3>
             <div class="box-def">
                 $$ \hat{v}(s, w) \approx v_\pi(s) $$
-                <p>用参数 $w$ 的函数来估计价值，把无限状态压缩到有限参数。</p>
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$\hat{v}$: 估计函数（神经网络）。</li>
+                        <li>$w$: 神经网络的参数（权重）。</li>
+                        <li>目标：找到一组参数 $w$，让 $\hat{v}$ 和真实的 $v$ 越像越好。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>不用背下所有乘法结果，学会"乘法口诀"就能算出所有题。神经网络就是那个"口诀"。</p>
-            </div>
-
-            <div class="box-flow">
-                <p><b>8.1 函数近似</b> 引入了神经网络 -> 训练不稳定怎么办？ -> 需要 <b>8.2 DQN 的技巧</b>。</p>
+                <p>这就是<b>"举一反三"</b>。</p>
+                <p>之前的表格法是死记硬背：背下9x9乘法表。如果问你 19x19，你就傻了。</p>
+                <p>函数近似是学规律：学会运算口诀（参数 $w$）。哪怕遇到没见过的数字（新状态），套进公式（神经网络）也能算个八九不离十。这就是深度强化学习 (Deep RL) 的由来。</p>
             </div>
 
             <h3>8.2 DQN 的两大法宝</h3>
             <div class="box-def">
                 <ul>
-                    <li><b>Experience Replay (经验回放)</b>：打破样本相关性。</li>
-                    <li><b>Target Network (目标网络)</b>：稳定训练目标。</li>
+                    <li><b>Experience Replay (经验回放)</b></li>
+                    <li><b>Target Network (目标网络)</b></li>
                 </ul>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>经验回放 = 做错题本，复习历史错题。目标网络 = 射箭时把靶子固定一会儿。</p>
+                <p>把深度学习用到 RL 上并不容易，因为数据是关联的且不稳定的。DQN 发明了两招：</p>
+                <p>1. <b>经验回放</b>：就是"错题本"。不要做完一道题就扔，记在本子上。晚上复习的时候，打乱顺序抽着做。这样既利用了旧数据，又打破了数据的连续性（关联性）。</p>
+                <p>2. <b>目标网络</b>：就是"打移动靶"。如果不固定 Target，你一更新参数，目标也跟着变，这永远练不准。Target Network
+                    也就是把靶子钉死一会，等你练好了，再把靶子挪个位置继续练。</p>
             </div>
         </section>
 
@@ -776,6 +882,15 @@
             <h3>9.1 策略梯度定理</h3>
             <div class="box-thm">
                 $$ \nabla_\theta J(\theta) \propto \mathbb{E}_\pi [ Q^\pi(s,a) \nabla_\theta \ln \pi(a|s, \theta) ] $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$J(\theta)$: 策略的好坏（目标函数）。</li>
+                        <li>$\nabla \ln \pi$: 告诉你往哪个方向调参数，能让动作 $a$ 出现的概率变大。</li>
+                        <li>$Q^\pi$: 这个动作 $a$ 到底好不好。</li>
+                        <li>意义：如果 $Q$ 很大（动作好），我们就沿着梯度方向走（增加概率）；如果 $Q$ 很小，反之。</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="box-flow">
@@ -785,10 +900,19 @@
             <h3>9.2 REINFORCE</h3>
             <div class="box-def">
                 $$ \theta \leftarrow \theta + \alpha G_t \nabla \ln \pi(A_t|S_t, \theta) $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>这里直接用 $G_t$（一整局的实际得分）代替了 $Q$。</li>
+                        <li>这是一种蒙特卡洛方法，必须等游戏结束才能更新。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>这局赢了 ($G_t$ 高)，就增加这些动作的概率。输了就减少。简单粗暴但有效。</p>
+                <p>这就是<b>"不论过程，只看结果"</b>。</p>
+                <p>虽然我不知道哪一步做对了，但只要最后赢了（$G_t$ 高），我就认为这一局里我做的所有动作都是对的，全部增加概率！</p>
+                <p>虽然会有误杀（赢的那局里可能也有臭棋），但只要样本够多，平均下来只有真正的妙手会被保留。</p>
             </div>
         </section>
 
@@ -810,19 +934,34 @@
                 style Actor fill:#e1f5fe,stroke:#01579b
                 style Critic fill:#fff3e0,stroke:#e65100
             </div>
-
-            <div class="box-flow">
-                <p><b>Actor</b> 负责表演（策略）-> <b>Critic</b> 负责打分（价值估计）-> 两者配合就是 <b>10.2 A2C</b>。</p>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>Actor</b> 是运动员，负责比赛。</p>
+                <p><b>Critic</b> 是教练，负责打分。</p>
+                <p>如果是 REINFORCE，没教练，运动员只能瞎练，等比赛赢了才知道自己练没练对。</p>
+                <p>有了 Critic，运动员每做一个动作，教练立马喊："这姿势不对！扣分！"（TD Error）。运动员原地就能改，学习效率极大提高。</p>
             </div>
 
             <h3>10.2 Advantage Actor-Critic (A2C)</h3>
             <div class="box-def">
                 $$ \theta \leftarrow \theta + \alpha A(s,a) \nabla \ln \pi(a|s, \theta) $$
-                <p>其中 Advantage $A(s,a) = Q(s,a) - V(s) \approx r + \gamma V(s') - V(s)$ (TD Error)。</p>
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <ul>
+                        <li>$A(s,a) = Q(s,a) - V(s)$: <b>优势函数 (Advantage)</b>。</li>
+                        <li>$Q(s,a)$: 选这个动作的价值。</li>
+                        <li>$V(s)$: 这里的平均价值。</li>
+                        <li>意义：$Q-V$ 表示"这个动作比平均水平好多少"。</li>
+                    </ul>
+                </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>盲人投篮靠最后进没进球调整（REINFORCE）。有了教练（Critic），每个动作做完马上给反馈，学得更快更稳。</p>
+                <p>为什么要减去 $V(s)$？这叫<b>"设立基准线"</b>。</p>
+                <p>考了80分算好吗？</p>
+                <p>如果班级平均分是40分，那80分太牛了，要大大奖励。</p>
+                <p>如果平均分是90分，那80分虽然也是正的，但其实是差生，要惩罚。</p>
+                <p>$A(s,a)$ 就是告诉你：<b>别光看绝对分数，要看你比平均水平强多少。</b> 这样学起来方差更小，更稳。</p>
             </div>
         </section>
 
