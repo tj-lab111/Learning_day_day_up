@@ -43,6 +43,8 @@
             --accent-color: #007bff;
             --bg-color: #f8f9fa;
             --text-color: #212529;
+            --sidebar-width: 300px;
+            --sidebar-bg: #fff;
             --heading-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             --code-font: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
@@ -53,13 +55,13 @@
             color: var(--text-color);
             margin: 0;
             line-height: 1.8;
-            display: flex;
+            transition: margin-left 0.3s ease;
         }
 
         /* Sidebar Styling */
         nav {
-            width: 300px;
-            background-color: #fff;
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
             border-right: 1px solid #dee2e6;
             position: fixed;
             height: 100vh;
@@ -67,10 +69,53 @@
             top: 0;
             left: 0;
             z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
         }
+
+        /* Collapsed State Class */
+        body.sidebar-closed nav {
+            transform: translateX(-100%);
+        }
+
+        body.sidebar-closed main {
+            margin-left: 0;
+            max-width: 1200px;
+            /* Expand content width when sidebar closed */
+            padding: 3rem 10%;
+            /* Center content nicely */
+        }
+
+        /* Toggle Button */
+        #sidebar-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease, background 0.2s;
+        }
+
+        #sidebar-toggle:hover {
+            background: #f0f0f0;
+        }
+
+        /* Adjust button position when sidebar is open if needed, 
+           but fixed top-left works well for both states usually. 
+           Optional: Move button inside nav when open? No, floating is standardized.
+        */
 
         nav .nav-header {
             padding: 1.5rem;
+            padding-top: 4rem;
+            /* Space for the toggle button */
             background: var(--primary-color);
             color: white;
             text-align: center;
@@ -107,15 +152,17 @@
 
         /* Main Content */
         main {
-            margin-left: 300px;
+            margin-left: var(--sidebar-width);
             padding: 3rem 5rem;
             max-width: 1000px;
-            width: 100%;
+            width: auto;
             background-color: white;
             min-height: 100vh;
             box-shadow: -5px 0 15px rgba(0, 0, 0, 0.02);
+            transition: margin-left 0.3s ease, max-width 0.3s ease, padding 0.3s ease;
         }
 
+        /* Rest of the styling remains the same... */
         /* Typography */
         h1,
         h2,
@@ -189,7 +236,6 @@
             background-color: #f1f8e9;
             border-left: 5px solid #8bc34a;
             margin-top: -1rem;
-            /* Connect to previous box */
             margin-bottom: 2rem;
             border-radius: 0 0 4px 4px;
         }
@@ -246,7 +292,6 @@
             color: var(--accent-color);
         }
 
-        /* Footer */
         footer {
             margin-top: 5rem;
             padding-top: 2rem;
@@ -256,7 +301,6 @@
             font-size: 0.9rem;
         }
 
-        /* Loading Check */
         #loading-check {
             position: fixed;
             top: 0;
@@ -268,6 +312,23 @@
             padding: 10px;
             z-index: 9999;
             display: none;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                transform: translateX(-100%);
+            }
+
+            body.sidebar-open nav {
+                transform: translateX(0);
+            }
+
+            main {
+                margin-left: 0;
+                padding: 2rem;
+            }
+
+            /* Mobile logic is slightly different, but the toggle works for both */
         }
     </style>
 </head>
@@ -288,7 +349,16 @@
                 }
             }, 4000);
         };
+
+        // Sidebar Toggle Function
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-closed');
+            // Save preference could be added to localStorage here
+        }
     </script>
+
+    <!-- Toggle Button -->
+    <button id="sidebar-toggle" onclick="toggleSidebar()" title="收起/展开目录">☰</button>
 
     <nav>
         <div class="nav-header">
