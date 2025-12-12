@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强化学习的数学原理 - 深度全解 (精注版)</title>
+
+    <!-- Mermaid JS (Cloudflare CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            securityLevel: 'loose',
+            flowchart: { useMaxWidth: true, htmlLabels: true }
+        });
+    </script>
+
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                tags: 'ams'
+            },
+            options: {
+                renderActions: {
+                    addMenu: [0, '', '']
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #007bff;
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --heading-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --code-font: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        body {
+            font-family: "Georgia", "Times New Roman", Times, serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.8;
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        nav {
+            width: 300px;
+            background-color: #fff;
+            border-right: 1px solid #dee2e6;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        nav .nav-header {
+            padding: 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+        }
+
+        nav .nav-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-family: var(--heading-font);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav li a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: var(--heading-font);
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f1f1f1;
+            transition: background 0.2s;
+        }
+
+        nav li a:hover {
+            background-color: #e9ecef;
+            color: var(--accent-color);
+            padding-left: 25px;
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 300px;
+            padding: 3rem 5rem;
+            max-width: 1000px;
+            width: 100%;
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: var(--heading-font);
+            color: var(--primary-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 3rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
+            color: var(--secondary-color);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            font-weight: bold;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        /* Boxes */
+        .box {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            font-family: var(--heading-font);
+            position: relative;
+        }
+
+        .box-def {
+            background-color: #e3f2fd;
+            border-left: 5px solid #2196f3;
+        }
+
+        .box-def strong {
+            color: #1976d2;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .box-thm {
+            background-color: #fff8e1;
+            border-left: 5px solid #ffc107;
+        }
+
+        .box-thm strong {
+            color: #f57f17;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .box-easy {
+            background-color: #f1f8e9;
+            border-left: 5px solid #8bc34a;
+            margin-top: -1rem;
+            /* Connect to previous box */
+            margin-bottom: 2rem;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .box-easy strong {
+            color: #558b2f;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95em;
+        }
+
+        .box-easy::before {
+            content: "💡 简单说 / Plain English";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #8bc34a;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Mermaid */
+        .mermaid {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        /* Source Tag */
+        .source-tag {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: var(--heading-font);
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            vertical-align: middle;
+        }
+
+        .source-link {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-left: 10px;
+            font-family: var(--heading-font);
+        }
+
+        .source-link:hover {
+            text-decoration: underline;
+            color: var(--accent-color);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Loading Check */
+        #loading-check {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #ffeeba;
+            color: #856404;
+            text-align: center;
+            padding: 10px;
+            z-index: 9999;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading-check">
+        ⚠️ 正在加载组件... 如果长时间未显示数学公式，请检查网络连接。
+    </div>
+    <script>
+        document.getElementById('loading-check').style.display = 'block';
+        window.onload = function () {
+            setTimeout(function () {
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    document.getElementById('loading-check').style.display = 'none';
+                } else {
+                    document.getElementById('loading-check').innerText = "❌ 公式加载失败。建议使用 Chrome 并确保网络通畅。";
+                }
+            }, 4000);
+        };
+    </script>
+
+    <nav>
+        <div class="nav-header">
+            <h2>课程目录</h2>
+        </div>
+        <ul>
+            <li><a href="#intro">前言：课程方法论</a></li>
+            <li><a href="#ch1">第1章：基本概念 (MDP)</a></li>
+            <li><a href="#ch2">第2章：贝尔曼方程</a></li>
+            <li><a href="#ch3">第3章：贝尔曼最优方程</a></li>
+            <li><a href="#ch4">第4章：值迭代与策略迭代</a></li>
+            <li><a href="#ch5">第5章：蒙特卡洛方法</a></li>
+            <li><a href="#ch6">第6章：随机逼近与 SGD</a></li>
+            <li><a href="#ch7">第7章：时序差分 (TD)</a></li>
+            <li><a href="#ch8">第8章：值函数近似 (DQN)</a></li>
+            <li><a href="#ch9">第9章：策略梯度 (PG)</a></li>
+            <li><a href="#ch10">第10章：Actor-Critic</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h1>强化学习的数学原理</h1>
+            <p style="font-size: 1.2rem; color: #555;">Mathematical Foundations of Reinforcement Learning</p>
+            <p><b>讲师：</b>赵世钰 (Westlake University)</p>
+            <p>
+                <a href="https://www.bilibili.com/video/BV1sd4y167NS" target="_blank" class="source-link">📺 Bilibili
+                    课程首页</a>
+                <a href="https://github.com/MathFoundationRL/Book-Mathmatical-Foundation-of-Reinforcement-Learning"
+                    target="_blank" class="source-link">📁 此处下载 PDF 教材</a>
+            </p>
+            <hr>
+        </header>
+
+        <section id="intro">
+            <h2>前言：学习指南</h2>
+            <p>本笔记致力于将“高大上”的数学公式拆解为“通俗易懂”的语言。我们采用双层结构：</p>
+            <ol>
+                <li><b>学术定义</b>：严谨的数学描述，用于应对考试和科研。</li>
+                <li><b>通俗解读</b>：用大白话和生活例子解释“它到底在说什么”。</li>
+            </ol>
+        </section>
+
+        <!-- CHAPTER 1 -->
+        <section id="ch1">
+            <div class="source-tag">来源：第1课 Basic Concepts</div>
+            <h2>第1章：基本概念 (MDP)</h2>
+
+            <h3>1.1 马尔可夫决策过程 (MDP)</h3>
+
+            <div class="box-def">
+                <strong>定义 1.1 (MDP 元组)</strong>
+                <p>一个 MDP 由五元组 $(S, A, P, R, \gamma)$ 定义：</p>
+                <ul>
+                    <li>$S$: 状态空间 (所有可能的情况)</li>
+                    <li>$A$: 动作空间 (能做的所有事)</li>
+                    <li>$P$: 状态转移概率 $p(s'|s,a) = \mathbb{P}(S_{t+1}=s' | S_t=s, A_t=a)$</li>
+                    <li>$R$: 奖励函数</li>
+                    <li>$\gamma$: 折扣因子, $\gamma \in [0, 1)$</li>
+                </ul>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>就把 MDP 想象成玩游戏：</p>
+                <ul>
+                    <li><b>S (状态)</b>：游戏屏幕上显示的画面。</li>
+                    <li><b>A (动作)</b>：手柄上的上下左右键。</li>
+                    <li><b>P (转移)</b>：你按了“跳”，马里奥不一定每次都能跳一样高（可能因为地形滑），这叫不确定性。</li>
+                    <li><b>R (奖励)</b>：吃到金币+100分，碰到乌龟-1条命。</li>
+                    <li><b>$\gamma$ (折扣)</b>：现在的100块钱比明天的100块钱值钱。这告诉我们要“活在当下”，不要为了太远的虚幻目标饿死。</li>
+                </ul>
+            </div>
+
+            <div class="mermaid">
+                graph LR
+                A["Agent (你)"] -- "Action (按键)" --> E["Environment (游戏机)"]
+                E -- "State (新画面)" --> A
+                E -- "Reward (得分)" --> A
+                style A fill:#e1f5fe,stroke:#01579b
+                style E fill:#fff3e0,stroke:#e65100
+            </div>
+
+            <h3>1.2 回报 (Return)</h3>
+
+            <div class="box-def">
+                <strong>定义 1.2 (折扣回报)</strong>
+                $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>R (Reward)</b> 是短视的，只看这一步爽不爽。</p>
+                <p><b>G (Return)</b> 是长远的，看的是“这辈子”能赚多少钱。强化学习的目标永远是让 $G$ 最大，而不是 $R$。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2 -->
+        <section id="ch2">
+            <div class="source-tag">来源：第2课 Bellman Equation</div>
+            <h2>第2章：贝尔曼方程 (Bellman Equation)</h2>
+
+            <h3>2.1 状态价值函数</h3>
+
+            <div class="box-def">
+                <strong>定义 2.1 (状态价值 $v_\pi$)</strong>
+                $$ v_\pi(s) = \mathbb{E}_\pi [G_t | S_t=s] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>状态价值</b>就是给当前状态“打分”。</p>
+                <p>比如下围棋，你处于一个“双三角”的局势（状态 $s$）。如果你的水平很高（策略 $\pi$ 好），你会觉得这局势赢面大（价值 $v$
+                    高）。如果水平臭，这局势可能就输了。所以价值取决于状态，也取决于你在这个状态下怎么玩（策略）。</p>
+            </div>
+
+            <h3>2.2 贝尔曼期望方程</h3>
+
+            <div class="box-thm">
+                <strong>定理 2.1 (递推公式)</strong>
+                $$ v_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} p(s', r | s, a) [r + \gamma v_\pi(s')] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>这个公式说的是：<b>今天的身价 = 今天的现金 + 明天的预估身价 $\times$ 折扣。</b></p>
+                <p>它把一个长远的复杂计算，拆解成了“这一步”和“剩下所有步”。这是动态规划的核心。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3 -->
+        <section id="ch3">
+            <div class="source-tag">来源：第3课 Bellman Optimality Equation</div>
+            <h2>第3章：贝尔曼最优方程 (BOE)</h2>
+
+            <h3>3.1 最优价值</h3>
+
+            <div class="box-thm">
+                <strong>定理 3.1 (BOE)</strong>
+                $$ v_*(s) = \max_{a} \sum_{s', r} p(s', r | s, a) [r + \gamma v_*(s')] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>之前的公式是“给定策略算价值”。现在的公式是“我要寻找神之手（最优策略）”。</p>
+                <p>这里的 $\max_a$ 意思是：在当前状态下，我不再随机出牌，而是<b>只选那个能让未来价值最大的动作</b>。只要我每一步都选最好的，我就能达到理论上的最高分。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4 -->
+        <section id="ch4">
+            <div class="source-tag">来源：第4课 Dynamic Programming</div>
+            <h2>第4章：动态规划 (DP)</h2>
+
+            <h3>4.1 策略迭代</h3>
+            <div class="mermaid">
+                graph LR
+                PE["评估 (Evaluation)<br>算出当前策略多好"] -- "v" --> PI["改进 (Improvement)<br>把策略变更好"]
+                PI -- "New pi" --> PE
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>这就好比练武功：</p>
+                <ol>
+                    <li><b>评估</b>：先按现在的套路打一套，看看得分多少。</li>
+                    <li><b>改进</b>：发现这招“黑虎掏心”得分高，那以后这招多用点。</li>
+                    <li><b>循环</b>：一直练，直到再怎么改也提高不了得分了，你就成宗师了。</li>
+                </ol>
+            </div>
+
+            <h3>4.2 值迭代</h3>
+            <div class="box-def">
+                $$ v_{k+1}(s) = \max_a \sum_{s', r} p(s', r | s, a) [r + \gamma v_k(s')] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>策略迭代比较稳，一步一步来。值迭代比较急：我不管策略是啥，我每天稍微看远一点点（迭代一次，$v$ 就传播远一步）。随着日子久了，我就能看清从任何位置出发到终点的最优路径了。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5 -->
+        <section id="ch5">
+            <div class="source-tag">来源：第5课 Monte Carlo Methods</div>
+            <h2>第5章：蒙特卡洛方法 (MC)</h2>
+
+            <h3>5.1 核心思想</h3>
+            <div class="box-def">
+                $$ v_\pi(s) \approx \frac{1}{N} \sum_{i=1}^N G_i $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>如果你不知道这枚硬币正面朝上的概率是多少（不知道 $P$），怎么办？</p>
+                <p><b>扔1000次，数数有多少次正面。</b></p>
+                <p>蒙特卡洛就是这个意思：我不懂物理公式，那我就亲自去试玩1000局游戏，把所有得分记下来取平均，那个平均分就是价值。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7 -->
+        <section id="ch7">
+            <div class="source-tag">来源：第7课 Temporal Difference Learning</div>
+            <h2>第7章：时序差分 (TD)</h2>
+            <p>这是强化学习最著名的方法，结合了 DP 和 MC 的优点。</p>
+
+            <h3>7.1 TD 公式</h3>
+            <div class="box-def">
+                $$ V(S_t) \leftarrow V(S_t) + \alpha [ \underbrace{R_{t+1} + \gamma V(S_{t+1})}_{\text{TD Target}} -
+                V(S_t) ] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>假设你预测回家要走30分钟 ($V(S_t) = 30$)。</p>
+                <p>你走了5分钟到了地铁站 ($R=5$)，发现还要坐20分钟地铁 ($V(S_{t+1})=20$)。</p>
+                <p>这时候你的<b>新预测</b>是 $5+20=25$ 分钟。</p>
+                <p>你的<b>旧预测</b>是 30 分钟。</p>
+                <p><b>TD 就是：用“新预测”去修正“旧预测”。</b> 你不用等到真回到家了才发现自己预测错了，半路就能改。</p>
+            </div>
+
+            <h3>7.2 Q-Learning</h3>
+            <div class="box-def">
+                $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma \max_{a} Q(S', a) - Q(S,A)] $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>Q-Learning 特别“自信”。不管我现在是不是在乱走（探索），我在学习的时候，总是假设我下一步会走得<b>完美</b> ($\max Q$)。这让它可以在犯错的同时，依然学到正确的知识。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8 -->
+        <section id="ch8">
+            <div class="source-tag">来源：第8课 Value Function Approximation</div>
+            <h2>第8章：值函数近似 (DQN)</h2>
+
+            <h3>8.1 为什么需要近似？</h3>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>之前的“表格法”是一个萝卜一个坑，每个状态存一个分。</p>
+                <p>但是像王者荣耀这种游戏，屏幕上的像素组合比宇宙原子还多，表格存不下。所以我们用<b>神经网络</b>（函数）来记分数。就像不用背下所有乘法结果，学会“乘法口诀”就能算出所有题。</p>
+            </div>
+
+            <h3>8.2 DQN 的两大法宝</h3>
+            <div class="box-def">
+                <ul>
+                    <li><b>Experience Replay (经验回放)</b></li>
+                    <li><b>Target Network (目标网络)</b></li>
+                </ul>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>经验回放</b>：像是“做错题本”。不仅刚做完题要改，以前做过的错题也要拿出来反复复习，防止忘了旧的学了新的，而且能打乱顺序，防止思维定势。</p>
+                <p><b>目标网络</b>：就像射箭。如果靶子一直动（Target 一直变），很难射准。Target Network 就是把靶子固定一会儿，让你先练练，练好了再挪靶子。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9 -->
+        <section id="ch9">
+            <div class="source-tag">来源：第9课 Policy Gradient</div>
+            <h2>第9章：策略梯度 (Policy Gradient)</h2>
+
+            <h3>9.1 策略梯度定理</h3>
+            <div class="box-thm">
+                $$ \theta \leftarrow \theta + \alpha G_t \nabla \ln \pi(A_t|S_t, \theta) $$
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>这句话翻译过来就是：</p>
+                <p>如果这一局游戏赢了 ($G_t$ 高)，那么刚才那一连串动作出现的概率 ($\pi$) 都要<b>增加</b>。</p>
+                <p>如果输了，那些动作的概率就要<b>减小</b>。</p>
+                <p>简单粗暴，但非常有效。</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10 -->
+        <section id="ch10">
+            <div class="source-tag">来源：第10课 Actor-Critic</div>
+            <h2>第10章：Actor-Critic</h2>
+
+            <div class="mermaid">
+                graph LR
+                Actor["Actor (演员)"] -- "动作" --> Env
+                Env -- "奖励" --> Critic["Critic (评委)"]
+                Critic -- "打分" --> Actor
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p>Policy Gradient 像是一个盲人在练习投篮，全靠最后进没进球（MC 回报）来调整，反馈太慢太随机。</p>
+                <p>Actor-Critic 请了个教练 (Critic)。</p>
+                <p><b>Actor (演员)</b>：负责表演（做动作）。</p>
+                <p><b>Critic (评委)</b>：负责打分。动作刚做完，评委就说“这动作姿势不对，扣分”。演员马上就能改，不用等到比赛结束。</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>整理自 赵世钰《强化学习的数学原理》系列课程。</p>
+        </footer>
+
+    </main>
+
+</body>
+
+</html>
