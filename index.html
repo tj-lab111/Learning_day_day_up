@@ -385,6 +385,8 @@
             <li><a href="#ch8">第8章：值函数近似 (DQN)</a></li>
             <li><a href="#ch9">第9章：策略梯度 (PG)</a></li>
             <li><a href="#ch10">第10章：Actor-Critic</a></li>
+            <li style="margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px;"><a href="#appendix">📚
+                    附录:进阶学习路线</a></li>
         </ul>
     </nav>
 
@@ -1165,6 +1167,53 @@
                     <li><b>Policy 的优势</b>: 即 Actor 更新用的 $A$ (<b>第10章</b>)。在 PPO 中，通常用 GAE($\lambda$) 来算 A。</li>
                     <li><b>Value 的目标</b>: 即 Critic 更新用的 Target (<b>第7章 & 8章</b>)。 Critic 需要拟合"真实回报"，这里通常直接用计算 A 时用到的
                         $TD(\lambda)$ 回报作为目标。</li>
+                </ul>
+            </div>
+        </section>
+
+        </section>
+
+        <!-- APPENDIX -->
+        <section id="appendix">
+            <h2>附录：RL 进阶学习路线</h2>
+
+            <div class="box-logic" style="background-color: #e3f2fd; border-left-color: #2196f3;">
+                <p><b>🎓 恭喜你修完基础！</b> 接下来该去哪？这里有一份"打怪升级"地图。</p>
+            </div>
+
+            <div class="box-def">
+                <strong>1. 必读经典 (The Bible)</strong>
+                <ul>
+                    <li><b>Sutton & Barto《Reinforcement Learning: An Introduction》</b>:
+                        这一行的圣经。不用多说，建议反复读。我们的笔记就是这本书的"降维打击版"。</li>
+                </ul>
+            </div>
+
+            <div class="box-def">
+                <strong>2. 优质课程 (Courses)</strong>
+                <ul>
+                    <li><b>David Silver (UCL)</b>: 经典的 RL 课程，偏理论，非常扎实。</li>
+                    <li><b>Sergey Levine (Berkeley CS285)</b>: <b>进阶必看</b>，该课程涵盖了深度强化学习 (Deep RL) 的最前沿，难度较大，适合想做科研的同学。
+                    </li>
+                    <li><b>OpenAI Spinning Up</b>: <b>实战最佳</b>！OpenAI 官方出的教程，手把手教你写代码。</li>
+                </ul>
+            </div>
+
+            <div class="box-def">
+                <strong>3. 动手写代码 (Code)</strong>
+                <ul>
+                    <li><b>Stable Baselines3 (SB3)</b>: 工业界标准库。就像 Pandas 之于数据分析，SB3 之于 RL。想快速跑通模型用它。</li>
+                    <li><b>CleanRL</b>: <b>学习算法细节神器</b>。它强调"单文件实现算法" (Single-file implementation)，没有复杂的封装，一行行代码看完就能懂 PPO
+                        到底怎么写的。</li>
+                </ul>
+            </div>
+
+            <div class="box-def">
+                <strong>4. 前沿方向 (Frontiers)</strong>
+                <ul>
+                    <li><b>RLHF (RL from Human Feedback)</b>: 大模型 (ChatGPT) 背后的核心技术。推荐学习 PPO 在 NLP 中的应用。</li>
+                    <li><b>Offline RL</b>: 只有数据，不能和环境交互怎么办？这是目前工业界落地的热点。</li>
+                    <li><b>Multi-Agent RL (MARL)</b>: 一群 AI 怎么打配合？（如 Dota2, StarCraft）。</li>
                 </ul>
             </div>
         </section>
