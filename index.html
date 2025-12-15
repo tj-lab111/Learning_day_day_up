@@ -405,16 +405,32 @@
         <section id="intro">
             <h2>前言：学习地图</h2>
             <p>本笔记致力于将"高大上"的数学公式拆解为"通俗易懂"的语言。</p>
-            <div class="box-logic">
-                <p>强化学习的核心目标是<b>找最优策略</b>。整个课程的逻辑链条是：</p>
-                <ul>
-                    <li>描述问题 -> <b>MDP (第1章)</b></li>
-                    <li>评估策略 -> <b>贝尔曼方程 (第2章)</b></li>
-                    <li>找最优 -> <b>BOE (第3章)</b></li>
-                    <li>怎么算？知道环境用 <b>DP (第4章)</b>；不知道环境用 <b>MC (第5章)</b> / <b>TD (第7章)</b></li>
-                    <li>状态太多？用函数拟合 -> <b>DQN (第8章)</b></li>
-                    <li>动作连续？直接优化策略 -> <b>PG (第9章)</b> / <b>Actor-Critic (第10章)</b></li>
-                </ul>
+            <div class="mermaid">
+                graph TD
+                subgraph Tools ["基础工具 / Fundamental Tools"]
+                Ch1["Ch1: 基本概念 (MDP)"] -->|"定义目标: G"| Ch2["Ch2: 贝尔曼方程 (V, Q)"]
+                Ch2 -->|"追求最优: max"| Ch3["Ch3: 贝尔曼最优方程 (BOE)"]
+                end
+
+                subgraph Algos ["算法 / Algorithms"]
+                Ch3 -->|"求解 BOE (已知模型)"| Ch4["Ch4: 动态规划 (DP)"]
+                Ch4 -- "去模型化 (Model-free)" --> Ch5["Ch5: 蒙特卡洛 (MC)"]
+                Ch5 -- "增量式更新 (快)" --> Ch7["Ch7: 时序差分 (TD)"]
+                Ch6["Ch6: 随机逼近理论"] -->|"提供数学保障"| Ch7
+                end
+
+                subgraph Rep ["表示 / Representation"]
+                Ch7 -- "解决维度灾难 (表格->函数)" --> Ch8["Ch8: 值函数近似 (DQN)"]
+                end
+
+                subgraph Policy ["策略 / Policy"]
+                Ch8 -- "解决连续动作 (Value->Policy)" --> Ch9["Ch9: 策略梯度 (PG)"]
+                Ch9 -- "降低方差 (引入Critic)" --> Ch10["Ch10: Actor-Critic (A2C)"]
+                end
+
+                style Ch1 fill:#f9f,stroke:#333,stroke-width:2px
+                style Ch4 fill:#bbf,stroke:#333,stroke-width:2px
+                style Ch8 fill:#bfb,stroke:#333,stroke-width:2px
             </div>
         </section>
 
@@ -471,7 +487,30 @@
             </div>
 
             <div class="box-flow">
-                <p><b>1.2 回报 G</b> 是随机变量（运气成分） -> 为了科学评估，我们需要它的"平均值" -> 这就是第2章的 <b>价值函数 V</b>。</p>
+                <p><b>1.2 回报 G</b> 是我们的目标 -> 但怎么操作才能拿到高回报？ -> 需要一个行动指南 -> 这就是 <b>1.3 策略 Policy</b>。</p>
+            </div>
+
+            <h3>1.3 策略 (Policy)</h3>
+            <div class="box-def">
+                <strong>定义 1.3 (策略)</strong>
+                <p>策略 $\pi$ 是从状态到动作的映射函数。告诉我们在某个状态下该干什么。</p>
+                <ul>
+                    <li><b>确定性策略 (Deterministic):</b> $a = \pi(s)$。看到路口必定左转。</li>
+                    <li><b>随机性策略 (Stochastic):</b> $\pi(a|s) = P(A_t=a | S_t=s)$。看到路口，70%概率左转，30%概率右转。</li>
+                </ul>
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 核心概念：</span>
+                    <ul>
+                        <li><b>Trajectory (轨迹):</b> 有了策略 $\pi$ 和环境 $P$，玩一局游戏就会产生一条序列：$S_0, A_0, R_1, S_1, A_1, R_2,
+                            \dots$。这就是轨迹。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>策略</b>就是<b>"锦囊妙计"</b>。</p>
+                <p>诸葛亮给赵云三个锦囊，告诉他"见人就拆"（确定性）或者"抓阄决定"（随机性）。这就是策略。</p>
+                <p>强化学习的目的，就是从零开始，把这个空白的锦囊（$\pi$），慢慢填满，变成百战百胜的最优兵法（$\pi^*$）。</p>
             </div>
         </section>
 
@@ -481,7 +520,7 @@
             <h2>第2章：贝尔曼方程 (Bellman Equation)</h2>
 
             <div class="box-logic">
-                <p><b>🔗 承上启下：</b> 第1章定义了"回报 G"是我们的目标。但 G 是随机变量（看脸）。要科学评估策略，需要期望值 -> <b>价值函数 V</b>。</p>
+                <p><b>🔗 承上启下：</b> 第1章有了"锦囊"（策略）。但这个锦囊好不好？能不能帮我拿高分（回报G）？需科学评估 -> <b>价值函数 V</b>。</p>
             </div>
 
             <h3>2.1 状态价值函数 $v_\pi$</h3>
@@ -617,13 +656,15 @@
                     </ul>
                 </div>
             </div>
+
             <div class="box-easy">
                 <strong>通俗解读</strong>
                 <p>这就像是<b>"互相打听身价"</b>。</p>
                 <p>一开始大家都是瞎猜的（比如都猜0分）。</p>
                 <p>第一轮：你看看你手里拿了多少工资 $r$，再问问你邻居（下一站）瞎猜的身价 $v_0$。</p>
                 <p>第二轮：你邻居通过第一轮更新，好像准了一点。你再根据他的新身价 $v_1$ 更新自己。</p>
-                <p>反复很多轮之后，大家的估价就通过这种"口口相传"传遍了全图，最终所有人的估值都准了。</p>
+                <p><b>为什么这叫 Model-based？</b> 因为你必须知道"谁是你邻居"以及"去邻居家的概率"（即知道 $P$）。如果你连地图都没有（不知道
+                    $P$），你就没法问邻居。现实中很多时候我们没有地图，所以 DP 往往只存在于理论中。</p>
             </div>
 
             <div class="box-flow">
@@ -649,22 +690,48 @@
                 <p>这就是策略改进 — 只要我贪心地选好的，新策略一定比旧策略强。</p>
             </div>
 
-            <h3>4.3 策略迭代 与 4.4 值迭代</h3>
+
+            <div class="box-flow">
+                <p><b>4.1 策略评估</b> + <b>4.2 策略改进</b> 循环交替 = <b>4.3 策略迭代</b>。</p>
+            </div>
+
+            <h3>4.3 策略迭代 (Policy Iteration)</h3>
             <div class="box-def">
-                <strong>值迭代公式：</strong>
+                <strong>算法流程</strong>
+                <ul>
+                    <li><b>第一步（评估）：</b> 保持策略 $\pi$ 不变，反复迭代计算 $v_\pi$ 直到收敛（也可以直接解方程）。</li>
+                    <li><b>第二步（改进）：</b> 根据准确的 $v_\pi$ 算出 $q_\pi$，更新策略 $\pi'(s) = \arg\max_a q_\pi(s,a)$。</li>
+                    <li>重复上述两步，直到策略不再变化（收敛至最优）。</li>
+                </ul>
+            </div>
+            <div class="box-easy">
+                <strong>通俗解读</strong>
+                <p><b>策略迭代</b> 是个"完美主义者"。</p>
+                <p>它每一次都要先把当下的能力彻底摸透（评估到收敛），确认无误了，才敢迈出改进的一步。</p>
+                <p>虽然走得稳，但太墨迹了。能不能别等算准了再改？</p>
+            </div>
+
+            <div class="box-flow">
+                <p><b>4.3 策略迭代</b> 太慢（因为要评估到收敛） -> 如果只评估一步就立刻改进？ -> 这就是 <b>4.4 值迭代</b>。</p>
+            </div>
+
+            <h3>4.4 值迭代 (Value Iteration)</h3>
+            <div class="box-def">
+                <strong>迭代公式</strong>
                 $$ v_{k+1}(s) = \max_a \sum_{s', r} p(s', r | s, a) [r + \gamma v_k(s')] $$
                 <div class="formula-breakdown">
                     <span class="formula-breakdown-title">📝 公式详解：</span>
                     <ul>
-                        <li>这里直接用了 $\max$，相当于把"评估"和"改进"合二为一了。</li>
-                        <li>不管策略是啥，我每次更新都假设我做当下最牛的动作。</li>
+                        <li>$\max_a$: 注意这里直接取了 max。</li>
+                        <li>本质：相当于把"评估"和"改进"合二为一。每一轮更新，$v$ 值变了，隐含的贪心策略其实也跟着变了。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p><b>策略迭代 (PI)</b> 比较稳重：先彻底搞清楚现在的水平（评估至收敛），再改一点点毛病（改进）。慢工出细活。</p>
-                <p><b>值迭代 (VI)</b> 比较急躁：我没空等你算准，我估个大概其，觉得右边好我就先往右边偏。边算边改。虽然过程比较混乱，但最终也能殊途同归找到最优解。</p>
+                <p><b>值迭代</b> 是个"急脾气"。</p>
+                <p>它不求把当下的身价算准，它只想赶紧变强。</p>
+                <p>看一眼局势，觉得哪边好就往哪边改一点。虽然中间过程的身价表 ($v$) 可能不准，但只要一直在往好的方向挪，最后也能殊途同归找到最优解。</p>
             </div>
         </section>
 
@@ -689,12 +756,18 @@
                     </ul>
                 </div>
             </div>
+
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>你想知道抛硬币正面的概率，但你不会算物理公式（没有 $P$）。怎么办？</p>
-                <p>简单：<b>抛1000次，数数多少次正面。</b></p>
-                <p>这时候，大数定律告诉你：只要你试的次数够多，你的统计结果就等于真实概率。</p>
-                <p>这就是蒙特卡洛：<b>大力出奇迹。</b> 不懂原理没关系，我拿数据（经验）堆出来。</p>
+                <p>DP 需要地图 ($P$)，MC 不需要。MC 是<b>"实践出真知" (Model-free)</b>。</p>
+                <p><b>为什么是 Model-free？</b> 我不需要知道物理引擎 ($P$) 怎么编写，我只需要跳进去玩。玩一局，我就知道这一局得了多少分。只要我玩的次数够多，平均分就是真实价值。</p>
+                <p><b>为什么必须等到游戏结束？</b> 因为定义 $G_t$ 是"未来所有奖励的总和"。如果不打到这一局结束，你就不知道总分是多少，也就没法拿这个数据去更新你的估值。所以 MC 只能用于<b>有终点
+                        (Episodic)</b> 的任务。</p>
+            </div>
+
+
+            <div class="box-flow">
+                <p><b>5.1 策略评估</b> (利用) 告诉我们哪个好 -> 但若只选目前最好的可能错过更好的 -> 需要 <b>5.2 探索</b> ($\epsilon$-greedy)。</p>
             </div>
 
             <h3>5.2 探索与利用 (Exploration vs Exploitation)</h3>
@@ -732,12 +805,18 @@
                     </ul>
                 </div>
             </div>
+
             <div class="box-easy">
-                <strong>通俗解读</strong>
-                <p>想象你在大雾天找下山的路（找最小值）。看不清地形，只能看清脚下。</p>
-                <p>你试探性地往低处走一步（$w - \alpha g$）。</p>
-                <p>虽然每一步因为有雾（噪声）可能走歪了，但只要你大方向是对的，且步子越来越小（$\alpha \to 0$），你最终一定能晃晃悠悠地走到谷底。</p>
-                <p><b>这就是"增量式更新"：不必等所有数据到齐，来一个我更正一点。</b></p>
+                <strong>通俗解读 (它解决了什么核心难题？)</strong>
+                <p>在 RL 中，我们想求期望（平均值），但我们不知道概率分布 $P$。<b>Robbins-Monro 算法告诉我们：不需要算期望！</b></p>
+                <p>只要你给我一个<b>采样</b>（比如玩一次游戏的一条轨迹），我就能拿着这个样本去更新参数。虽然单个样本有噪声（不准），但只要按照 RM 算法的规则（步长 $\alpha$
+                    越来越小），最后就能神奇地收敛到真实的期望值。</p>
+                <p>这就打通了从"理论计算"（需要 $P$）到"数据学习"（只需要样本）的任督二脉。</p>
+            </div>
+
+
+            <div class="box-flow">
+                <p><b>6.1 RM算法</b> 是理论基础 -> 把它搬到神经网络优化问题上 -> 就变成了 <b>6.2 SGD</b>。</p>
             </div>
 
             <h3>6.2 随机梯度下降 (SGD)</h3>
@@ -764,8 +843,19 @@
             <h2>第7章：时序差分 (TD)</h2>
 
             <div class="box-logic">
-                <p><b>🔗 承上启下：</b> MC 必须等到游戏结束才能更新（慢）。TD 结合了 DP 的 Bootstrapping 和 MC 的 Model-free，可以<b>走一步更新一步</b>（快）。
-                </p>
+                <p><b>🔗 承上启下：</b> MC 必须等到游戏结束才能更新（慢）。TD 结合了 DP 和 MC 的优点：</p>
+                <ul>
+                    <li><b>像 MC (Model-free)</b>：直接从经验中学习，不需要知道环境概率 $P$。</li>
+                    <li><b>像 DP (Bootstrapping)</b>：用后继状态的估计值 $V(S')$ 来更新当前 $V(S)$，不用等到底。</li>
+                </ul>
+                <p>结果：TD 可以<b>走一步更新一步</b>，速度快且方差比 MC 小。</p>
+                <br>
+                <p><b>💡 TD 家族谱系：</b></p>
+                <ul>
+                    <li><b>TD(0)</b>: 解决<b>预测问题</b> (Prediction)。只评估 V，不负责找动作。</li>
+                    <li><b>SARSA</b>: 解决<b>控制问题</b> (Control)。边走边学，保守派 (On-Policy)。</li>
+                    <li><b>Q-Learning</b>: 解决<b>控制问题</b> (Control)。边走边学，激进派 (Off-Policy)。</li>
+                </ul>
             </div>
 
             <h3>7.1 TD(0) 公式</h3>
@@ -790,6 +880,11 @@
                 <p>你不需要真的开回家，你只需要开到"下一个路口"，有了新的信息，就能修正之前的预测。这就是 TD：<b>Bootstrapping（用估计修正估计）</b>。</p>
             </div>
 
+
+            <div class="box-flow">
+                <p><b>7.1 TD(0)</b> 能估算 V -> 但做决策需要知道 Q -> 于是此时用 TD 估算 Q，就得到了 <b>7.2 SARSA</b>。</p>
+            </div>
+
             <h3>7.2 SARSA (On-Policy)</h3>
             <div class="box-def">
                 $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma Q(S', A') - Q(S,A)] $$
@@ -808,6 +903,11 @@
                 <p>因次，SARSA 比较谨慎，会尽量避开悬崖边走，因为它怕自己手抖掉下去。</p>
             </div>
 
+
+            <div class="box-flow">
+                <p><b>7.2 SARSA</b> 太谨慎 (On-Policy) -> 如果想要大胆探索最优路径？ -> 让更新目标不仅限于当前动作 -> <b>7.3 Q-Learning</b>。</p>
+            </div>
+
             <h3>7.3 Q-Learning (Off-Policy)</h3>
             <div class="box-def">
                 $$ Q(S,A) \leftarrow Q(S,A) + \alpha [R + \gamma \max_{a} Q(S', a) - Q(S,A)] $$
@@ -824,6 +924,31 @@
                 <p>虽然我现在在瞎走（探索），但我心怀理想。我认为我每一步之后，都会走上最优路径 ($\max Q$)。</p>
                 <p>所以 Q-Learning 不怕走悬崖边。它想："虽然我可能会手抖掉下去，但只要不掉下去，那条路就是最近的！" 所以它会找到更优的路径，但也比 SARSA 更鲁莽。</p>
             </div>
+
+            <div class="box-flow">
+                <p><b>7.3 Q-Learning</b> 只看眼前这一步。如果我想看远一点，比如看3步再更新？ -> <b>n-Step TD</b>。如果我想综合看1步、2步...直到无穷步？ ->
+                    <b>TD($\lambda$)</b>。
+                </p>
+            </div>
+
+            <h3>7.4 n-Step TD 与 TD($\lambda$)</h3>
+            <div class="box-def">
+                <strong>n-Step TD</strong>
+                <p>不再可以只看 $R_{t+1}$，而是多看几步真实奖励，最后再加上估计值。</p>
+                <ul>
+                    <li>TD(0): $R_{t+1} + \gamma V_t(S_{t+1})$ (只看1步真实)</li>
+                    <li>MC: $R_{t+1} + \dots + \gamma^{T-1}R_T$ (全看真实)</li>
+                    <li>n-Step: $R_{t+1} + \dots + \gamma^{n-1}R_{t+n} + \gamma^n V_t(S_{t+n})$ (看n步真实)</li>
+                </ul>
+                <br>
+                <strong>TD($\lambda$)</strong>
+                <p>$\lambda$ 是一个权重参数 ($\lambda \in [0, 1]$)。TD($\lambda$) 相当于把所有可能的 n-Step Return 加权平均。</p>
+                <ul>
+                    <li>$\lambda = 0$: 变成了 TD(0)。只看眼前，<b>Bias 大 (偏差大)</b>，<b>Variance 小 (方差小)</b>。</li>
+                    <li>$\lambda = 1$: 变成了 MC。全看未来，<b>Bias 小 (无偏)</b>，<b>Variance 大 (方差大)</b>。</li>
+                    <li>$0 < \lambda < 1$: 取得了中间平衡，既利用了真实回报的无偏性，又利用了估值的稳定性。</li>
+                </ul>
+            </div>
         </section>
 
         <!-- CHAPTER 8 -->
@@ -832,7 +957,10 @@
             <h2>第8章：值函数近似 (DQN)</h2>
 
             <div class="box-logic">
-                <p><b>🔗 承上启下：</b> 表格法只能处理小问题。状态无限多（如图像）怎么办？用<b>函数（神经网络）</b>来拟合 Q 表。</p>
+                <p><b>🔗 承上启下：</b> 第4章到第7章我们讲的方法，统称为<b>表格法 (Tabular Methods)</b>。</p>
+                <p><b>什么是表格法？</b> 就是用一个超级大的 Excel 表来存 $Q(s,a)$。一行是状态 s，一列是动作 a。</p>
+                <p><b>有问题吗？</b> 有。如果状态 s 是围棋的棋盘（$10^{170}$ 种可能），Excel 表直接爆炸了，存不下也查不完（维度灾难）。</p>
+                <p><b>怎么解决？</b> 用一个函数（神经网络）$f(s)$ 来把这个表"压缩"进去。这就是<b>值函数近似</b>。</p>
             </div>
 
             <h3>8.1 函数近似</h3>
@@ -854,17 +982,35 @@
                 <p>函数近似是学规律：学会运算口诀（参数 $w$）。哪怕遇到没见过的数字（新状态），套进公式（神经网络）也能算个八九不离十。这就是深度强化学习 (Deep RL) 的由来。</p>
             </div>
 
+
+            <div class="box-flow">
+                <p><b>8.1 函数近似</b> 引入了神经网络，但不稳定 -> 引入两大神技来"稳住"它 -> <b>8.2 经验回放 & 目标网络</b>。</p>
+            </div>
+
             <h3>8.2 DQN 的两大法宝</h3>
             <div class="box-def">
+                <strong>(1) Experience Replay (经验回放)</strong>
+                <p><b>学术原理：</b> 使得数据满足 <b>I.I.D (独立同分布)</b> 假设。</p>
                 <ul>
-                    <li><b>Experience Replay (经验回放)</b></li>
-                    <li><b>Target Network (目标网络)</b></li>
+                    <li><b>问题：</b> RL 的数据是序列产生 ($s_t, s_{t+1}, \dots$)，前后样本高度相关。且随着策略改变，数据分布也在变
+                        (Non-stationary)。这违反了神经网络训练最基本的 I.I.D 假设，导致训练发散。</li>
+                    <li><b>解决：</b> 将 $(s,a,r,s')$ 存入 Replay Buffer，训练时<b>随机采样 (Random Batch)</b>。这打破了时间相关性，使梯度下降更稳定。
+                    </li>
+                </ul>
+                <br>
+                <strong>(2) Target Network (目标网络)</strong>
+                <p><b>学术原理：</b> 解决 <b>Moving Target (移动目标)</b> 问题，抑制振荡。</p>
+                <ul>
+                    <li><b>问题：</b> 我们的损失函数是 $L(\theta) = (r + \gamma \max Q(s'; \theta) - Q(s; \theta))^2$。注意，target
+                        本身也包含参数 $\theta$。每次更新 $\theta$，这就好比"左脚踩右脚"，目标和预测都在变，容易追尾（震荡）。</li>
+                    <li><b>解决：</b> 引入另一套参数 $\theta^-$ 固定一段时间。Target 变成 $r + \gamma \max Q(s';
+                        \theta^-)$。这就把"打移动靶"变成了"打固定靶"，每隔几千步再把靶子挪一下 ($\theta^- \leftarrow \theta$)。</li>
                 </ul>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
                 <p>把深度学习用到 RL 上并不容易，因为数据是关联的且不稳定的。DQN 发明了两招：</p>
-                <p>1. <b>经验回放</b>：就是"错题本"。不要做完一道题就扔，记在本子上。晚上复习的时候，打乱顺序抽着做。这样既利用了旧数据，又打破了数据的连续性（关联性）。</p>
+                <p>1. <b>经验回放</b>：就是"错题本"。不要做完一道题就扔，记在本子上。晚上复习的时候，打乱顺序抽着做。这样既利用了旧数据，又打破了数据的连续性（关联性），模拟了"独立"做题的环境。</p>
                 <p>2. <b>目标网络</b>：就是"打移动靶"。如果不固定 Target，你一更新参数，目标也跟着变，这永远练不准。Target Network
                     也就是把靶子钉死一会，等你练好了，再把靶子挪个位置继续练。</p>
             </div>
@@ -876,7 +1022,13 @@
             <h2>第9章：策略梯度 (Policy Gradient)</h2>
 
             <div class="box-logic">
-                <p><b>🔗 承上启下：</b> DQN 只能处理离散动作（按键）。机器人关节是连续动作！我们需要<b>直接优化策略</b> $\pi(a|s)$，而不是先算 Q 再贪心。</p>
+                <p><b>🔗 承上启下：</b> DQN 虽然强，但只能处理<b>离散动作</b>（如按键：上、下、左、右）。</p>
+                <p><b>为什么 DQN 搞不定连续动作？</b> 因为 DQN 的决策依据是 $a^* = \arg\max_a Q(s,a)$。</p>
+                <ul>
+                    <li>离散时：比大小就行（比如比4个动作的Q值）。</li>
+                    <li>连续时（如方向盘转角 0°~360°）：要在一个连续无限空间里找最大值，这本身就是个极难的优化问题，不可能每一步都算一遍。</li>
+                </ul>
+                <p><b>怎么办？</b> 不要算 Q 再找 Max 了，直接输出动作！这就是 <b>策略梯度 (PG)</b>。</p>
             </div>
 
             <h3>9.1 策略梯度定理</h3>
@@ -942,26 +1094,78 @@
                 <p>有了 Critic，运动员每做一个动作，教练立马喊："这姿势不对！扣分！"（TD Error）。运动员原地就能改，学习效率极大提高。</p>
             </div>
 
+
+            <div class="box-flow">
+                <p><b>10.1 架构</b> 引入了 Critic -> 但 Critic 打绝对分数方差大 -> 改成打"相对分数" (Advantage) -> <b>10.2 A2C</b>。</p>
+            </div>
+
             <h3>10.2 Advantage Actor-Critic (A2C)</h3>
+            <div class="box-logic">
+                <p><b>💡 为什么要区分两个更新目标？</b></p>
+                <ul>
+                    <li><b>Actor (策略)</b> 需要 <b>Advantage</b>：它需要知道"这个动作比平庸水平好多少"，这样才能决定是增加概率还是减少概率。A 是<b>相对值</b>。</li>
+                    <li><b>Critic (评委)</b> 需要 <b>Target</b>：它需要知道"这一局真实的绝对得分是多少"，这样它才能训练自己打分越来越准。Target 是<b>绝对值</b>。
+                    </li>
+                </ul>
+            </div>
             <div class="box-def">
-                $$ \theta \leftarrow \theta + \alpha A(s,a) \nabla \ln \pi(a|s, \theta) $$
+                <strong>(1) 优势函数 (Advantage Function) 定义</strong>
+                $$ A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s) $$
                 <div class="formula-breakdown">
-                    <span class="formula-breakdown-title">📝 公式详解：</span>
+                    <span class="formula-breakdown-title">📝 数学本质：</span>
                     <ul>
-                        <li>$A(s,a) = Q(s,a) - V(s)$: <b>优势函数 (Advantage)</b>。</li>
-                        <li>$Q(s,a)$: 选这个动作的价值。</li>
-                        <li>$V(s)$: 这里的平均价值。</li>
-                        <li>意义：$Q-V$ 表示"这个动作比平均水平好多少"。</li>
+                        <li>$Q^\pi(s,a)$: 在状态 $s$ 做动作 $a$ 的价值。</li>
+                        <li>$V^\pi(s)$: 在状态 $s$ 平均能拿多少分（即 $\sum \pi(a|s) Q(s,a)$）。</li>
+                        <li><b>物理意义：</b> 动作 $a$ 相对于期望表现好多少？如果 $A>0$，说明 $a$ 是好动作（高于平均）；$A<0$，说明是坏动作。< /li>
+                    </ul>
+                </div>
+                <br>
+                <strong>(2) 实际计算：用 TD Error 近似 Advantage</strong>
+                <p>实际训练时，我们不想维护兩個网络 (Q 和 V) 因为太累赘。我们用 TD Error $\delta$ 来估算 $A$：</p>
+                $$ A(s_t, a_t) \approx \delta_t = r_t + \gamma V(s_{t+1}) - V(s_t) $$
+                <div class="formula-breakdown">
+                    <span class="formula-breakdown-title">📝 为什么可以这样代替？</span>
+                    <ul>
+                        <li>因为 $Q(s_t, a_t) \approx r_t + \gamma V(s_{t+1})$ (贝尔曼方程)。</li>
+                        <li>所以 $Q - V \approx (r + \gamma V') - V$。这就是 TD Error！</li>
+                        <li><b>妙处：</b> 我们只需要训练一个 Critic 网络 $V(s)$，不仅能算 V，还能顺便算出 A。</li>
                     </ul>
                 </div>
             </div>
             <div class="box-easy">
                 <strong>通俗解读</strong>
-                <p>为什么要减去 $V(s)$？这叫<b>"设立基准线"</b>。</p>
-                <p>考了80分算好吗？</p>
-                <p>如果班级平均分是40分，那80分太牛了，要大大奖励。</p>
-                <p>如果平均分是90分，那80分虽然也是正的，但其实是差生，要惩罚。</p>
-                <p>$A(s,a)$ 就是告诉你：<b>别光看绝对分数，要看你比平均水平强多少。</b> 这样学起来方差更小，更稳。</p>
+                <p>为什么要减去 $V(s)$？这叫<b>"减去基线 (Baseline) 降方差"</b>。</p>
+                <p><b>举例：</b> 假设不管做什么动作，最少都给100分（$Q \in [100, 105]$）。</p>
+                <ul>
+                    <li>如果不减基线：$Q$ 值很大，梯度一直很大，更新很不稳（方差大）。</li>
+                    <li>减去基线 $V \approx 102$：优势 $A \in [-2, +3]$。</li>
+                </ul>
+                <p>如果 $A$ 是正的（+3），就鼓励；如果是负的（-2），就惩罚。<b>奖罚分明</b>，模型学得更快更稳。</p>
+            </div>
+
+            <div class="box-logic" style="background-color: #fff3e0; border-left-color: #ff9800;">
+                <p><b>🚀 进阶：如何理解高深论文中的概念？</b></p>
+                <p>例如这句话："引入了 <b>Decoupled GAE</b> 和 <b>Value Pretraining</b> 来解决长序列中的<b>价值估计偏差</b>问题"。</p>
+                <p>要读懂它，你需要调用以下章节的知识：</p>
+                <ul>
+                    <li><b>GAE (Generalized Advantage Estimation)</b>: 即"广义优势估计"。你需要懂 <b>第10章 Advantage</b> 的定义，以及
+                        <b>第7章 TD($\lambda$)</b> 中的多步回报权衡（Bias-Variance Tradeoff）。GAE 就是一种更高级的计算 A 值的方法。
+                    </li>
+                    <li><b>价值估计偏差 (Bias)</b>: 你需要懂 <b>第5章 MC (无偏)</b> 和 <b>第7章 TD (有偏)</b> 的区别。长序列中，TD 的偏差会累积，所以需要技巧来修正。
+                    </li>
+                    <li><b>Value Pretraining</b>: 你需要懂 <b>第8章 函数近似</b>。即在正式学策略前，先用神经网络把 V 值（裁判）练得准一点，别让瞎指挥的裁判带偏了运动员。
+                    </li>
+                </ul>
+                <hr style="border-top: 1px dashed #ff9800; margin: 10px 0;">
+                <p>例如这句话："在标准 PPO 中，计算 <b>Policy 的优势</b> 和计算 <b>Value 的目标</b> 通常共用同一个 $\lambda$"。</p>
+                <p>要读懂它，你需要调用以下章节的知识：</p>
+                <ul>
+                    <li><b>共用 $\lambda$ (Lambda)</b>: 你需要懂 <b>第7章 TD($\lambda$)</b>。$\lambda$ 是控 Bias 和 Variance 平衡的。共用
+                        $\lambda$ 是为了让 Actor 和 Critic 对"未来的看法"保持一致。</li>
+                    <li><b>Policy 的优势</b>: 即 Actor 更新用的 $A$ (<b>第10章</b>)。在 PPO 中，通常用 GAE($\lambda$) 来算 A。</li>
+                    <li><b>Value 的目标</b>: 即 Critic 更新用的 Target (<b>第7章 & 8章</b>)。 Critic 需要拟合"真实回报"，这里通常直接用计算 A 时用到的
+                        $TD(\lambda)$ 回报作为目标。</li>
+                </ul>
             </div>
         </section>
 
